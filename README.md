@@ -72,9 +72,6 @@ Dengan Dashboard Analisis Penggunaan Sepeda ini, Anda dapat:
 **Copyright © 2025 MC172D5X1418 - Julianti **
 
 _Dashboard analisis dan visualisasi data. Kode & visualisasi harap cantumkan sumber._
-
-Dashboard ini dengan bangga dipersembahkan oleh **Julianti** dengan sentuhan magis dari Streamlit, Pandas, Matplotlib, dan Seaborn.
-
 ---
 
 **Siap untuk mengungkap potensi data sepeda Anda?  🚀  Jalankan dashboard ini sekarang dan mulailah petualangan analisis data Anda!** 🎉
