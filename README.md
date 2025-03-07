@@ -1,11 +1,5 @@
 # 🚲  Bike Sharing Dashboard: Temukan Insight Tersembunyi dari Data Sepeda! 📊
 
-[![Streamlit App](https://img.shields.io/badge/Streamlit-App-brightgreen?style=for-the-badge&logo=streamlit)](<link_aplikasi_streamlit_anda_jika_ada>)
-[![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-orange?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-red?style=for-the-badge&logo=matplotlib&logoColor=white)](https://matplotlib.org/)
-[![Seaborn](https://img.shields.io/badge/Seaborn-Statistical%20Plots-purple?style=for-the-badge&logo=seaborn&logoColor=white)](https://seaborn.pydata.org/)
-
 **Selamat datang di Dashboard Analisis Penggunaan Sepeda!** 🚴‍♀️💨
 
 Ingin tahu rahasia di balik ramainya penyewaan sepeda di kota Anda? 🤔  Dashboard interaktif ini hadir untuk mengungkap pola tersembunyi dari data penggunaan sepeda Anda.  Dengan visualisasi yang **cantik** dan **informatif**, Anda akan mendapatkan *insight* berharga untuk **mengoptimalkan operasional**, **meningkatkan layanan**, dan **memahami perilaku pengguna** sepeda dengan lebih baik.
@@ -26,8 +20,6 @@ Ingin tahu rahasia di balik ramainya penyewaan sepeda di kota Anda? 🤔  Dashbo
 *   **Distribusi Penggunaan? Kami Punya Visualisasinya!** 📊
     *   **Jam Kerja vs. Akhir Pekan:**  Bagaimana distribusi penggunaan sepeda per jam berbeda antara hari kerja dan akhir pekan?  Grafik garisnya sangat informatif! 👔🥳
     *   **Kondisi Cuaca dalam Klaster Penyewaan:**  Apakah ada preferensi kondisi cuaca tertentu di setiap klaster penyewaan?  *Bar plot* berwarna-warni akan menjelaskannya! 🌈
-*   **Filter Interaktif? Tentu Saja!** ⚙️
-    *   **Sidebar Filter Ajaib:**  Saring data berdasarkan **Tahun**, **Musim**, **Bulan**, **Hari dalam Seminggu**, dan **Kondisi Cuaca**! Analisis data jadi lebih **terarah** dan **efektif**! 🎯
 
 ## 🛠️ Teknologi yang Membuat Dashboard Ini Super Keren 🛠️
 
@@ -35,6 +27,7 @@ Ingin tahu rahasia di balik ramainya penyewaan sepeda di kota Anda? 🤔  Dashbo
 *   **Pandas:**  Jagoan manipulasi dan analisis data yang tak tertandingi. 🐼
 *   **Matplotlib & Seaborn:**  Duo visualisasi data yang menghasilkan grafik-grafik **menawan** dan **informatif**. 📊🎨
 *   **Streamlit:**  Framework *web app* yang memudahkan pembuatan dashboard interaktif dengan **kode Python sederhana**. 🚀
+*   **Ploty:**  Pustaka grafik *interaktif* yang menghasilkan visualisasi web-based yang dinamis dan responsif, memungkinkan *eksplorasi data* yang lebih mendalam. 🌐🖱️
 
 ## 📂 Sumber Data yang Kami Olah 📂
 
@@ -52,15 +45,15 @@ Ingin tahu rahasia di balik ramainya penyewaan sepeda di kota Anda? 🤔  Dashbo
 2.  **Instal Semua Kebutuhan (Dependensi):**
     Pastikan Python dan `pip` sudah terpasang. Lalu, jalankan perintah sakti ini:
     ```bash
-    pip install pandas matplotlib seaborn streamlit
+    pip install pandas matplotlib seaborn streamlit ploty
     ```
 
 3.  **Jalankan Aplikasi Streamlit:**
     Buka terminal Anda, arahkan ke direktori proyek, dan ketik perintah ajaib ini:
     ```bash
-    streamlit run your_script_name.py
+    streamlit run dashboard.py
     ```
-    *(Jangan lupa ganti `your_script_name.py` dengan nama file Python dashboard Anda, contoh: `dashboard_sepeda.py`)*
+    *(Jangan lupa ganti `dashboard.py` dengan nama file Python dashboard Anda, contoh: `dashboard_sepeda.py`)*
 
 4.  **Dashboard Siap Diakses di Browser!** 🌐
     Streamlit akan otomatis membuka dashboard di *browser* web Anda. Jika tidak, kunjungi URL yang muncul di terminal (biasanya `http://localhost:8501`).
@@ -76,11 +69,11 @@ Dengan Dashboard Analisis Penggunaan Sepeda ini, Anda dapat:
 
 ## 📝 Lisensi & Hak Cipta 📝
 
-**Copyright © [2025] [Nama Anda/Organisasi Anda]**
+**Copyright © 2025 MC172D5X1418 - Julianti **
 
 _Dashboard analisis dan visualisasi data. Kode & visualisasi harap cantumkan sumber._
 
-Dashboard ini dengan bangga dipersembahkan oleh **[Nama Anda]** dengan sentuhan magis dari Streamlit, Pandas, Matplotlib, dan Seaborn.
+Dashboard ini dengan bangga dipersembahkan oleh **Julianti** dengan sentuhan magis dari Streamlit, Pandas, Matplotlib, dan Seaborn.
 
 ---
 
