@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
-from babel.numbers import format_currency
 
 # Set tema seaborn dan warna Streamlit
 sns.set(style='whitegrid')
