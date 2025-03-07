@@ -146,9 +146,7 @@ st.markdown(
         border-radius: 10px;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }}
-    .stMultiSelect>label, .stSelectbox>label, .stNumberInput>label, .stDateInput>label, .stTimeInput>label {{
-        color: white; /* Label filter sidebar */
-    }}
+
 
     </style>
     """,
@@ -158,44 +156,18 @@ st.markdown(
 # Header dashboard
 st.header("Bike Sharing Analysis Dashboard :bike:", anchor=False)
 
-# Sidebar filter interaktif
-with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_bicycle.svg/1200px-Font_Awesome_5_solid_bicycle.svg.png", width=90)
-    st.subheader("Filter Data Interaktif", anchor=False)
-    st.markdown("Pilih filter untuk visualisasi:",  unsafe_allow_html=True)
-
-    # Filter Tahun
-    selected_years = st.multiselect("Tahun", yearly_usage_df['yr'].unique(), default=list(yearly_usage_df['yr'].unique()))
-    filtered_yearly_usage_df = yearly_usage_df[yearly_usage_df['yr'].isin(selected_years)]
-
-    # Filter Musim
-    selected_seasons = st.multiselect("Musim", seasonal_usage_df['season'].unique(), default=list(seasonal_usage_df['season'].unique()))
-    filtered_seasonal_usage_df = seasonal_usage_df[seasonal_usage_df['season'].isin(selected_seasons)]
-
-    # Filter Bulan
-    selected_months = st.multiselect("Bulan", monthly_usage_df['mnth'].unique(), default=list(monthly_usage_df['mnth'].unique()))
-    filtered_monthly_usage_df = monthly_usage_df[monthly_usage_df['mnth'].isin(selected_months)]
-
-    # Filter Hari dalam Seminggu
-    selected_weekdays = st.multiselect("Hari dalam Seminggu", weekday_usage_df['weekday'].unique(), default=list(weekday_usage_df['weekday'].unique()))
-    filtered_weekday_usage_df = weekday_usage_df[weekday_usage_df['weekday'].isin(selected_weekdays)]
-
-    # Filter Kondisi Cuaca
-    selected_weather = st.multiselect("Kondisi Cuaca", weather_impact_df['weathersit'].unique(), default=list(weather_impact_df['weathersit'].unique()))
-    filtered_weather_impact_df = weather_impact_df[weather_impact_df['weathersit'].isin(selected_weather)]
-
 
 st.subheader('Tren Penggunaan Sepeda Berdasarkan Waktu dan Faktor Lainnya', anchor=False)
 
 # 1. Tren Penggunaan Sepeda Bulanan
 with st.expander("Tren Penggunaan Sepeda Bulanan"):
     day_df['dteday'] = pd.to_datetime(day_df['dteday'])
-    monthly_orders_df_day = day_df.resample(rule='M', on='dteday').agg({'cnt': 'sum'}).reset_index() # Resample bulanan
-    monthly_orders_df_day.index = monthly_orders_df_day.index.strftime('%Y-%m') # Format index tahun-bulan
-    monthly_orders_df_day.rename(columns={'dteday': 'month', 'cnt': 'total_rentals'}, inplace=True) # Rename kolom
+    monthly_orders_df_day = day_df.resample(rule='M', on='dteday').agg({'cnt': 'sum'}).reset_index()
+    monthly_orders_df_day['month'] = monthly_orders_df_day['dteday'].dt.strftime('%Y-%m') # Format kolom bulan setelah resample
+    monthly_orders_df_day.rename(columns={'dteday': 'month', 'cnt': 'total_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(monthly_orders_df_day['month'], monthly_orders_df_day['total_rentals'], marker='o', linewidth=2, color=PRIMARY_COLOR) # Line plot bulanan
+    ax.plot(monthly_orders_df_day['month'], monthly_orders_df_day['total_rentals'], marker='o', linewidth=2, color=PRIMARY_COLOR)
     ax.set_title("Total Penyewaan Sepeda per Bulan", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Bulan", fontsize=12, color="#666666")
     ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
@@ -204,23 +176,23 @@ with st.expander("Tren Penggunaan Sepeda Bulanan"):
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Pola Penggunaan Sepeda Bulanan:** \n\n"
+    st.markdown("**Insight Visualisasi Pola Penggunaan Sepeda Bulanan:** \n\n"
     "Grafik garis: total penyewaan sepeda bulanan (2011-2012).\n\n"
     "* **Pola Musiman Terlihat**\n"
     "* **Puncak: Musim Panas-Awal Gugur (Juni-September)**\n"
     "* **Terendah: Musim Dingin-Awal Tahun (November-Februari)**\n"
     "* **Pertumbuhan Tahunan: 2011 ke 2012**\n"
     "* **Pola Konsisten 2011 & 2012**"
-    """)
+    )
 
 # 2. Tren Penggunaan Sepeda Tahunan
 with st.expander("Tren Penggunaan Sepeda Tahunan"):
-    yearly_orders_df_day = day_df.groupby('yr').agg({'cnt': 'sum'}).reset_index() # Agregasi tahunan
-    yearly_orders_df_day['yr'] = yearly_orders_df_day['yr'].map({0: 2011, 1: 2012}) # Mapping tahun
-    yearly_orders_df_day.rename(columns={'yr': 'year', 'cnt': 'total_rentals'}, inplace=True) # Rename kolom
+    yearly_orders_df_day = day_df.groupby('yr').agg({'cnt': 'sum'}).reset_index()
+    yearly_orders_df_day['yr'] = yearly_orders_df_day['yr'].map({0: 2011, 1: 2012})
+    yearly_orders_df_day.rename(columns={'yr': 'year', 'cnt': 'total_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    sns.barplot(x='year', y='total_rentals', data=yearly_orders_df_day, palette=[PRIMARY_COLOR, "#D3D3D3"]) # Bar plot tahunan
+    sns.barplot(x='year', y='total_rentals', data=yearly_orders_df_day, palette=[PRIMARY_COLOR, "#D3D3D3"])
     ax.set_title("Total Penyewaan Sepeda per Tahun", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Tahun", fontsize=12, color="#666666")
     ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
@@ -240,12 +212,12 @@ with st.expander("Tren Penggunaan Sepeda Tahunan"):
 
 # 3. Tren Penggunaan Sepeda Musiman
 with st.expander("Tren Penggunaan Sepeda Musiman"):
-    seasonal_orders_df_day = day_df.groupby('season').agg({'cnt': 'sum'}).reset_index() # Agregasi musiman
-    seasonal_orders_df_day['season'] = seasonal_orders_df_day['season'].map({1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'}) # Mapping musim
-    seasonal_orders_df_day.rename(columns={'season': 'season_name', 'cnt': 'total_rentals'}, inplace=True) # Rename kolom
+    seasonal_orders_df_day = day_df.groupby('season').agg({'cnt': 'sum'}).reset_index()
+    seasonal_orders_df_day['season'] = seasonal_orders_df_day['season'].map({1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'})
+    seasonal_orders_df_day.rename(columns={'season': 'season_name', 'cnt': 'total_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    sns.barplot(x='season_name', y='total_rentals', data=seasonal_orders_df_day, palette=[PRIMARY_COLOR] + ["#D3D3D3"] * 3) # Bar plot musiman
+    sns.barplot(x='season_name', y='total_rentals', data=seasonal_orders_df_day, palette=[PRIMARY_COLOR] + ["#D3D3D3"] * 3)
     ax.set_title("Total Penyewaan Sepeda per Musim", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Musim", fontsize=12, color="#666666")
     ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
@@ -265,12 +237,12 @@ with st.expander("Tren Penggunaan Sepeda Musiman"):
 
 # 4. Tren Penggunaan Sepeda Mingguan
 with st.expander("Tren Penggunaan Sepeda per Hari dalam Seminggu"):
-    weekday_orders_df_hour = hour_df.groupby('weekday').agg({'cnt': 'mean'}).reset_index() # Agregasi mingguan
-    weekday_orders_df_hour['weekday'] = weekday_orders_df_hour['weekday'].map({0: 'Minggu', 1: 'Senin', 2: 'Selasa', 3: 'Rabu', 4: 'Kamis', 5: 'Jumat', 6: 'Sabtu'}) # Mapping hari
-    weekday_orders_df_hour.rename(columns={'weekday': 'day_of_week', 'cnt': 'average_rentals'}, inplace=True) # Rename kolom
+    weekday_orders_df_hour = hour_df.groupby('weekday').agg({'cnt': 'mean'}).reset_index()
+    weekday_orders_df_hour['weekday'] = weekday_orders_df_hour['weekday'].map({0: 'Minggu', 1: 'Senin', 2: 'Selasa', 3: 'Rabu', 4: 'Kamis', 5: 'Jumat', 6: 'Sabtu'})
+    weekday_orders_df_hour.rename(columns={'weekday': 'day_of_week', 'cnt': 'average_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x='day_of_week', y='average_rentals', data=weekday_orders_df_hour, palette=[PRIMARY_COLOR] + ["#D3D3D3"] * 6) # Bar plot mingguan
+    sns.barplot(x='day_of_week', y='average_rentals', data=weekday_orders_df_hour, palette=[PRIMARY_COLOR] + ["#D3D3D3"] * 6)
     ax.set_title("Rata-rata Penyewaan Sepeda per Hari dalam Seminggu", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Hari dalam Seminggu", fontsize=12, color="#666666")
     ax.set_ylabel("Rata-rata Penyewaan", fontsize=12, color="#666666")
@@ -290,11 +262,11 @@ with st.expander("Tren Penggunaan Sepeda per Hari dalam Seminggu"):
 
 # 5. Tren Penggunaan Sepeda Harian
 with st.expander("Tren Penggunaan Sepeda per Jam dalam Sehari"):
-    hourly_orders_df_hour = hour_df.groupby('hr').agg({'cnt': 'mean'}).reset_index() # Agregasi per jam
-    hourly_orders_df_hour.rename(columns={'hr': 'hour', 'cnt': 'average_rentals'}, inplace=True) # Rename kolom
+    hourly_orders_df_hour = hour_df.groupby('hr').agg({'cnt': 'mean'}).reset_index()
+    hourly_orders_df_hour.rename(columns={'hr': 'hour', 'cnt': 'average_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(hourly_orders_df_hour['hour'], hourly_orders_df_hour['average_rentals'], marker='o', linewidth=2, color=PRIMARY_COLOR) # Line plot per jam
+    ax.plot(hourly_orders_df_hour['hour'], hourly_orders_df_hour['average_rentals'], marker='o', linewidth=2, color=PRIMARY_COLOR)
     ax.set_title("Rata-rata Penyewaan Sepeda per Jam dalam Sehari", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Jam dalam Sehari", fontsize=12, color="#666666")
     ax.set_ylabel("Rata-rata Penyewaan", fontsize=12, color="#666666")
@@ -314,12 +286,12 @@ with st.expander("Tren Penggunaan Sepeda per Jam dalam Sehari"):
 
 # 6. Hari Libur vs. Bukan Hari Libur
 with st.expander("Pola Penggunaan Sepeda pada Hari Libur vs. Bukan Hari Libur"):
-    holiday_orders_df_day = day_df.groupby('holiday').agg({'cnt': 'mean'}).reset_index() # Agregasi hari libur
-    holiday_orders_df_day['holiday'] = holiday_orders_df_day['holiday'].map({0: 'Bukan Hari Libur', 1: 'Hari Libur'}) # Mapping hari libur
-    holiday_orders_df_day.rename(columns={'holiday': 'holiday_status', 'cnt': 'average_rentals'}, inplace=True) # Rename kolom
+    holiday_orders_df_day = day_df.groupby('holiday').agg({'cnt': 'mean'}).reset_index()
+    holiday_orders_df_day['holiday'] = holiday_orders_df_day['holiday'].map({0: 'Bukan Hari Libur', 1: 'Hari Libur'})
+    holiday_orders_df_day.rename(columns={'holiday': 'holiday_status', 'cnt': 'average_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(6, 5))
-    sns.barplot(x='holiday_status', y='average_rentals', data=holiday_orders_df_day, palette=[PRIMARY_COLOR, "#D3D3D3"]) # Bar plot hari libur
+    sns.barplot(x='holiday_status', y='average_rentals', data=holiday_orders_df_day, palette=[PRIMARY_COLOR, "#D3D3D3"])
     ax.set_title("Rata-rata Penyewaan Sepeda pada Hari Libur vs. Bukan Hari Libur", loc="center", fontsize=14, color="#333333")
     ax.set_xlabel("Status Hari Libur", fontsize=12, color="#666666")
     ax.set_ylabel("Rata-rata Penyewaan", fontsize=12, color="#666666")
@@ -339,12 +311,12 @@ with st.expander("Pola Penggunaan Sepeda pada Hari Libur vs. Bukan Hari Libur"):
 
 # 7. Hari Kerja vs. Bukan Hari Kerja
 with st.expander("Pola Penggunaan Sepeda pada Hari Kerja vs. Bukan Hari Kerja"):
-    workingday_orders_df_day = day_df.groupby('workingday').agg({'cnt': 'mean'}).reset_index() # Agregasi hari kerja
-    workingday_orders_df_day['workingday'] = workingday_orders_df_day['workingday'].map({0: 'Bukan Hari Kerja', 1: 'Hari Kerja'}) # Mapping hari kerja
-    workingday_orders_df_day.rename(columns={'workingday': 'workingday_status', 'cnt': 'average_rentals'}, inplace=True) # Rename kolom
+    workingday_orders_df_day = day_df.groupby('workingday').agg({'cnt': 'mean'}).reset_index()
+    workingday_orders_df_day['workingday'] = workingday_orders_df_day['workingday'].map({0: 'Bukan Hari Kerja', 1: 'Hari Kerja'})
+    workingday_orders_df_day.rename(columns={'workingday': 'workingday_status', 'cnt': 'average_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(6, 5))
-    sns.barplot(x='workingday_status', y='average_rentals', data=workingday_orders_df_day, palette=[PRIMARY_COLOR, "#D3D3D3"]) # Bar plot hari kerja
+    sns.barplot(x='workingday_status', y='average_rentals', data=workingday_orders_df_day, palette=[PRIMARY_COLOR, "#D3D3D3"])
     ax.set_title("Rata-rata Penyewaan Sepeda pada Hari Kerja vs. Bukan Hari Kerja", loc="center", fontsize=14, color="#333333")
     ax.set_xlabel("Status Hari Kerja", fontsize=12, color="#666666")
     ax.set_ylabel("Rata-rata Penyewaan", fontsize=12, color="#666666")
@@ -364,17 +336,17 @@ with st.expander("Pola Penggunaan Sepeda pada Hari Kerja vs. Bukan Hari Kerja"):
 
 # 8. Pengaruh Kondisi Cuaca
 with st.expander("Pengaruh Kondisi Cuaca terhadap Penggunaan Sepeda"):
-    weathersit_orders_df_day = day_df.groupby('weathersit').agg({'cnt': 'mean'}).reset_index() # Agregasi kondisi cuaca
+    weathersit_orders_df_day = day_df.groupby('weathersit').agg({'cnt': 'mean'}).reset_index()
     weathersit_orders_df_day['weathersit'] = weathersit_orders_df_day['weathersit'].map({
         1: 'Cerah/Berawan',
         2: 'Kabut/Awan',
         3: 'Hujan Ringan/Salju Ringan',
         4: 'Cuaca Ekstrem'
-    }) # Mapping kondisi cuaca
-    weathersit_orders_df_day.rename(columns={'weathersit': 'weather_condition', 'cnt': 'average_rentals'}, inplace=True) # Rename kolom
+    })
+    weathersit_orders_df_day.rename(columns={'weathersit': 'weather_condition', 'cnt': 'average_rentals'}, inplace=True)
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    sns.barplot(x='weather_condition', y='average_rentals', data=weathersit_orders_df_day, palette=[PRIMARY_COLOR] + ["#D3D3D3"] * 3) # Bar plot kondisi cuaca
+    sns.barplot(x='weather_condition', y='average_rentals', data=weathersit_orders_df_day, palette=[PRIMARY_COLOR] + ["#D3D3D3"] * 3)
     ax.set_title("Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca", loc="center", fontsize=14, color="#333333")
     ax.set_xlabel("Kondisi Cuaca", fontsize=12, color="#666666")
     ax.set_ylabel("Rata-rata Penyewaan", fontsize=12, color="#666666")
@@ -383,19 +355,19 @@ with st.expander("Pengaruh Kondisi Cuaca terhadap Penggunaan Sepeda"):
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Pengaruh Kondisi Cuaca:** \n\n"
+    st.markdown("**Insight Visualisasi Pengaruh Kondisi Cuaca:** \n\n"
     "Grafik batang: rata-rata penyewaan per kondisi cuaca.\n\n"
     "* **Cuaca Pengaruhi Penyewaan**\n"
     "* **Cerah/Berawan: Tertinggi**\n"
     "* **Kabut/Awan: Menurun**\n"
     "* **Hujan/Salju Ringan: Terendah**\n"
     "* **Preferensi Cuaca Cerah**"
-    """)
+    )
 
 # 9. Korelasi Temperatur
 with st.expander("Korelasi Temperatur dengan Total Penyewaan"):
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.scatterplot(x='temp', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7) # Scatter plot temperatur
+    sns.scatterplot(x='temp', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7)
     ax.set_title("Hubungan antara Temperatur dan Total Penyewaan Sepeda", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Temperatur (Normalized)", fontsize=12, color="#666666")
     ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
@@ -416,7 +388,7 @@ with st.expander("Korelasi Temperatur dengan Total Penyewaan"):
 # 10. Korelasi Kelembapan
 with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.scatterplot(x='hum', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7) # Scatter plot kelembapan
+    sns.scatterplot(x='hum', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7)
     ax.set_title("Hubungan antara Kelembapan dan Total Penyewaan Sepeda", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Kelembapan (Normalized)", fontsize=12, color="#666666")
     ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
@@ -436,7 +408,7 @@ with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
 # 11. Korelasi Kecepatan Angin
 with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.scatterplot(x='windspeed', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7) # Scatter plot kecepatan angin
+    sns.scatterplot(x='windspeed', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7)
     ax.set_title("Hubungan antara Kecepatan Angin dan Total Penyewaan Sepeda", loc="center", fontsize=16, color="#333333")
     ax.set_xlabel("Kecepatan Angin (Normalized)", fontsize=12, color="#666666")
     ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
@@ -455,11 +427,11 @@ with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
 
 # 12. Distribusi Jam Kerja vs Akhir Pekan
 with st.expander("Distribusi Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir Pekan"):
-    hourly_usage_weekday_weekend_df = hour_df.groupby(['hr', 'workingday'])['cnt'].mean().unstack() # Groupby jam & hari kerja
-    hourly_usage_weekday_weekend_df.columns = ['Akhir Pekan', 'Hari Kerja'] # Rename kolom
+    hourly_usage_weekday_weekend_df = hour_df.groupby(['hr', 'workingday'])['cnt'].mean().unstack()
+    hourly_usage_weekday_weekend_df.columns = ['Akhir Pekan', 'Hari Kerja']
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    hourly_usage_weekday_weekend_df.plot(kind='line', ax=ax, linewidth=2, color=[PRIMARY_COLOR, '#D3D3D3']) # Line plot distribusi jam
+    hourly_usage_weekday_weekend_df.plot(kind='line', ax=ax, linewidth=2, color=[PRIMARY_COLOR, '#D3D3D3'])
     ax.set_title('Rata-rata Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir Pekan', fontsize=16, fontweight='bold', color="#333333")
     ax.set_xlabel('Jam dalam Sehari', fontsize=12, color="#666666")
     ax.set_ylabel('Rata-rata Penyewaan', fontsize=12, color="#666666")
@@ -470,66 +442,20 @@ with st.expander("Distribusi Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Distribusi Jam Kerja vs Akhir Pekan:** \n\n"
+    st.markdown("**Insight Visualisasi Distribusi Jam Kerja vs Akhir Pekan:** \n\n"
     "Grafik garis: distribusi jam kerja vs akhir pekan.\n\n"
     "* **Pola Penggunaan Berbeda: Hari Kerja vs Akhir Pekan**\n"
     "* **Hari Kerja: Puncak Ganda (8 & 17-18)**\n"
     "* **Akhir Pekan: Puncak Tunggal Siang (14-16)**\n"
     "* **Hari Kerja > Akhir Pekan (Jam Sibuk)**\n"
     "* **Operasional: Bedakan Hari Kerja vs Akhir Pekan**"
-    """)
-
-# 13. Distribusi Kondisi Cuaca dalam Klaster
-with st.expander("Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda"):
-    weathersit_labels = {
-        1: 'Cerah/Berawan',
-        2: 'Kabut/Awan',
-        3: 'Hujan Ringan/Salju Ringan',
-        4: 'Cuaca Ekstrem'
-    } # Label kondisi cuaca
-    weathersit_cluster_counts = day_df.groupby('rental_cluster')['weathersit'].value_counts(normalize=True).unstack(fill_value=0).reset_index() # Value counts kondisi cuaca per cluster
-    weathersit_cluster_counts_melted = pd.melt(weathersit_cluster_counts, id_vars=['rental_cluster'], var_name='weathersit', value_name='proportion') # Melt DataFrame
-    weathersit_cluster_counts_melted['weathersit_label'] = weathersit_cluster_counts_melted['weathersit'].map(weathersit_labels) # Mapping label
-
-    fig, ax = plt.subplots(figsize=(12, 6))
-    sns.barplot(x='rental_cluster', y='proportion', hue='weathersit_label', data=weathersit_cluster_counts_melted, palette="viridis") # Bar plot distribusi kondisi cuaca
-    plt.title('Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda', fontsize=16, fontweight='bold', color="#333333")
-    plt.xlabel('Klaster Penyewaan', fontsize=12, color="#666666")
-    plt.ylabel('Proporsi', fontsize=12, color="#666666")
-    plt.xticks(fontsize=10, color="#e0e0e0")
-    plt.yticks(fontsize=10, color="#e0e0e0")
-    ax.legend(title='Kondisi Cuaca', fontsize=10, title_fontsize=11, labelcolor='white')
-    ax.yaxis.grid(True, linestyle='--', color='rgba(255, 255, 255, 0.3)')
-    ax.xaxis.grid(False)
-    ax.spines['bottom'].set_color('white')
-    ax.spines['top'].set_color('white')
-    ax.spines['left'].set_color('white')
-    ax.spines['right'].set_color('white')
-    ax.title.set_color('white')
-    ax.xaxis.label.set_color('white')
-    ax.yaxis.label.set_color('white')
-    plt.tight_layout()
-    st.pyplot(fig)
-
-    st.markdown("---")
-    st.subheader("Insight:", anchor=False)
-    st.markdown(
-        """
-        Distribusi kondisi cuaca per klaster penyewaan.
-        Perbandingan proporsi kondisi cuaca antar klaster.
-
-        **Poin insight:**
-        * **Preferensi Cuaca per Klaster: Berbeda**\n"
-        * **Cuaca Ekstrem: Proporsi per Klaster**\n"
-        * **Adaptasi Operasional: Berdasar Sensitivitas Cuaca**
-        """,
-        unsafe_allow_html=True
     )
 
+
     st.markdown("---")
     st.markdown(
         """
-        **Copyright © 2025 Julianti - MC172D5X1418**
+        **Copyright © 2025 MC172D5X1418 - Julianti**
 
         _Dashboard analisis dan visualisasi data.
         Kode & visualisasi harap cantumkan sumber._
@@ -537,4 +463,4 @@ with st.expander("Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan 
         unsafe_allow_html=True
     )
 
-st.caption('Dashboard dibuat oleh Julianti - MC172D5X1418 (Streamlit, Pandas, Matplotlib, Seaborn).')
+st.caption('Dashboard dibuat oleh MC172D5X1418 - Julianti (Streamlit, Pandas, Matplotlib, Seaborn).')
