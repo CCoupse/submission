@@ -3,8 +3,55 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 from babel.numbers import format_currency
+import plotly.express as px
 
-sns.set(style='darkgrid')
+# Konfigurasi tampilan halaman Streamlit
+st.set_page_config(page_title="Bike Sharing Dashboard", layout="wide")
+
+# Palet warna yang menarik dan sesuai dengan tema UI modern
+COLORS = {
+    'primary': '#29B5DA',
+    'secondary': '#1A5276',
+    'background': '#F4F6F6',
+    'text': '#0E1117'
+}
+
+st.markdown(
+    f"""
+    <style>
+    body {{
+        color: {COLORS['text']};
+        background-color: {COLORS['background']};
+    }}
+    .stApp {{
+        background-color: {COLORS['background']};
+    }}
+    .st-ef {{ /* Untuk sidebar */
+        background-color: {COLORS['background']};
+    }}
+    .stExpander {{
+        border: 1px solid {COLORS['primary']};
+        border-radius: 10px;
+    }}
+    .stButton>button {{
+        color: {COLORS['background']};
+        background-color: {COLORS['primary']};
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+    }}
+    h1, h2, h3, h4, h5, h6 {{
+        color: {COLORS['secondary']};
+    }}
+    .streamlit-expanderHeader {{
+        font-weight: bold;
+        color: {COLORS['secondary']};
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 # Fungsi untuk menyiapkan DataFrame yang dibutuhkan
 def create_hourly_usage_df(df):
@@ -79,88 +126,113 @@ temp_hum_windspeed_df = create_temp_hum_windspeed_df(hour_df)
 
 
 # Membuat Dashboard di Streamlit
-st.set_page_config(page_title="Bike Sharing Dashboard", layout="wide")
-st.header("Bike Sharing Analysis Dashboard :bike:")
+st.header("Bike Sharing Analysis Dashboard :bike:", anchor=False)
 
-# Sidebar
+# Sidebar untuk Filter Data
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_bicycle.svg/1200px-Font_Awesome_5_solid_bicycle.svg.png") # Logo Sepeda atau logo perusahaan jika ada
-    st.subheader("Filter Data")
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_bicycle.svg/1200px-Font_Awesome_5_solid_bicycle.svg.png", width=100)
+    st.subheader("Filter Data", anchor=False)
 
-# Visualisasi Data
-st.subheader('Tren Penggunaan Sepeda')
+    # Filter Musim
+    selected_seasons = st.multiselect("Pilih Musim",
+                                        seasonal_usage_df['season'].unique(),
+                                        default=list(seasonal_usage_df['season'].unique()))
+
+    # Filter Bulan
+    selected_months = st.multiselect("Pilih Bulan",
+                                      monthly_usage_df['mnth'].unique(),
+                                      default=list(monthly_usage_df['mnth'].unique()))
+
+    # Filter Hari dalam Seminggu
+    selected_weekdays = st.multiselect("Pilih Hari dalam Seminggu",
+                                        weekday_usage_df['weekday'].unique(),
+                                        default=list(weekday_usage_df['weekday'].unique()))
+
+    # Filter Tahun
+    selected_years = st.multiselect("Pilih Tahun",
+                                      yearly_usage_df['yr'].unique(),
+                                      default=list(yearly_usage_df['yr'].unique()))
+
+    # Filter Kondisi Cuaca
+    selected_weather = st.multiselect("Pilih Kondisi Cuaca",
+                                         weather_impact_df['weathersit'].unique(),
+                                         default=list(weather_impact_df['weathersit'].unique()))
+
+# Judul Visualisasi Data
+st.subheader('Tren Penggunaan Sepeda', anchor=False)
 
 # 1. Tren Penggunaan Sepeda per Jam
-with st.expander("Tren Penggunaan Sepeda per Jam"):
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(hourly_usage_df["hr"], hourly_usage_df["cnt"], marker='o', linestyle='-', color="#29B5DA")
-    ax.set_title("Rata-rata Penggunaan Sepeda per Jam dalam Sehari", loc="center")
-    ax.set_xlabel("Jam dalam Sehari")
-    ax.set_ylabel("Rata-rata Total Penyewaan")
-    ax.tick_params(axis='x', rotation=0)
-    st.pyplot(fig)
+with st.expander("Tren Penggunaan Sepeda per Jam", expanded=True):
+    fig_hourly = px.line(hourly_usage_df, x="hr", y="cnt",
+                         title="Rata-rata Penggunaan Sepeda per Jam dalam Sehari",
+                         labels={'hr': 'Jam dalam Sehari', 'cnt': 'Rata-rata Total Penyewaan'},
+                         markers=True)
+    fig_hourly.update_traces(line_color=COLORS['primary'], marker_color=COLORS['primary'])
+    st.plotly_chart(fig_hourly, use_container_width=True)
 
 # 2. Tren Penggunaan Sepeda Harian
 with st.expander("Tren Penggunaan Sepeda Harian"):
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(daily_usage_df["dteday"], daily_usage_df["cnt"], color="#29B5DA")
-    ax.set_title("Tren Rata-rata Penggunaan Sepeda Harian", loc="center")
-    ax.set_xlabel("Tanggal")
-    ax.set_ylabel("Rata-rata Total Penyewaan")
-    ax.tick_params(axis='x', rotation=45)
-    st.pyplot(fig)
+    # Filter data harian berdasarkan tahun yang dipilih
+    filtered_daily_usage = daily_usage_df[pd.to_datetime(daily_usage_df['dteday']).dt.year.isin([int(yr) for yr in selected_years])]
+    fig_daily = px.line(filtered_daily_usage, x="dteday", y="cnt",
+                         title="Tren Rata-rata Penggunaan Sepeda Harian",
+                         labels={'dteday': 'Tanggal', 'cnt': 'Rata-rata Total Penyewaan'})
+    fig_daily.update_traces(line_color=COLORS['primary'])
+    st.plotly_chart(fig_daily, use_container_width=True)
+
 
 # 3. Tren Penggunaan Sepeda Musiman
 with st.expander("Tren Penggunaan Sepeda Musiman"):
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x="season", y="cnt", data=seasonal_usage_df, palette="viridis", ax=ax)
-    ax.set_title("Rata-rata Penggunaan Sepeda per Musim", loc="center")
-    ax.set_xlabel("Musim")
-    ax.set_ylabel("Rata-rata Total Penyewaan")
-    st.pyplot(fig)
+    filtered_seasonal_usage = seasonal_usage_df[seasonal_usage_df['season'].isin(selected_seasons)]
+    fig_seasonal = px.bar(filtered_seasonal_usage, x="season", y="cnt",
+                          title="Rata-rata Penggunaan Sepeda per Musim",
+                          labels={'season': 'Musim', 'cnt': 'Rata-rata Total Penyewaan'},
+                          color_discrete_sequence=[COLORS['primary']])
+    st.plotly_chart(fig_seasonal, use_container_width=True)
 
 # 4. Tren Penggunaan Sepeda Bulanan
 with st.expander("Tren Penggunaan Sepeda Bulanan"):
-    fig, ax = plt.subplots(figsize=(12, 6))
-    sns.barplot(x="mnth", y="cnt", data=monthly_usage_df, palette="viridis", ax=ax, order=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    ax.set_title("Rata-rata Penggunaan Sepeda per Bulan", loc="center")
-    ax.set_xlabel("Bulan")
-    ax.set_ylabel("Rata-rata Total Penyewaan")
-    st.pyplot(fig)
+    filtered_monthly_usage = monthly_usage_df[monthly_usage_df['mnth'].isin(selected_months)]
+    fig_monthly = px.bar(filtered_monthly_usage, x="mnth", y="cnt",
+                         title="Rata-rata Penggunaan Sepeda per Bulan",
+                         labels={'mnth': 'Bulan', 'cnt': 'Rata-rata Total Penyewaan'},
+                         category_orders={"mnth": ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},
+                         color_discrete_sequence=[COLORS['primary']])
+    st.plotly_chart(fig_monthly, use_container_width=True)
 
 # 5. Tren Penggunaan Sepeda per Hari dalam Seminggu
 with st.expander("Tren Penggunaan Sepeda per Hari dalam Seminggu"):
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x="weekday", y="cnt", data=weekday_usage_df, palette="viridis", ax=ax)
-    ax.set_title("Rata-rata Penggunaan Sepeda per Hari dalam Seminggu", loc="center")
-    ax.set_xlabel("Hari dalam Seminggu")
-    ax.set_ylabel("Rata-rata Total Penyewaan")
-    st.pyplot(fig)
+    filtered_weekday_usage = weekday_usage_df[weekday_usage_df['weekday'].isin(selected_weekdays)]
+    fig_weekday = px.bar(filtered_weekday_usage, x="weekday", y="cnt",
+                         title="Rata-rata Penggunaan Sepeda per Hari dalam Seminggu",
+                         labels={'weekday': 'Hari dalam Seminggu', 'cnt': 'Rata-rata Total Penyewaan'},
+                         category_orders={"weekday": ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']},
+                         color_discrete_sequence=[COLORS['primary']])
+    st.plotly_chart(fig_weekday, use_container_width=True)
 
 # 6. Perbandingan Penggunaan Sepeda Tahunan (2011 vs 2012)
 with st.expander("Perbandingan Penggunaan Sepeda Tahunan"):
-    fig, ax = plt.subplots(figsize=(8, 5))
-    sns.barplot(x="yr", y="cnt", data=yearly_usage_df, palette="viridis", ax=ax)
-    ax.set_title("Perbandingan Rata-rata Penggunaan Sepeda Tahunan", loc="center")
-    ax.set_xlabel("Tahun")
-    ax.set_ylabel("Rata-rata Total Penyewaan")
-    st.pyplot(fig)
+    filtered_yearly_usage = yearly_usage_df[yearly_usage_df['yr'].isin(selected_years)]
+    fig_yearly = px.bar(filtered_yearly_usage, x="yr", y="cnt",
+                         title="Perbandingan Rata-rata Penggunaan Sepeda Tahunan",
+                         labels={'yr': 'Tahun', 'cnt': 'Rata-rata Total Penyewaan'},
+                         color_discrete_sequence=[COLORS['primary']])
+    st.plotly_chart(fig_yearly, use_container_width=True)
 
 # 7. Pengaruh Kondisi Cuaca terhadap Penggunaan Sepeda
 with st.expander("Pengaruh Kondisi Cuaca terhadap Penggunaan Sepeda"):
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x="weathersit", y="cnt", data=weather_impact_df, palette="viridis", ax=ax)
-    ax.set_title("Rata-rata Penggunaan Sepeda berdasarkan Kondisi Cuaca", loc="center")
-    ax.set_xlabel("Kondisi Cuaca")
-    ax.set_ylabel("Rata-rata Total Penyewaan")
-    st.pyplot(fig)
+    filtered_weather_impact = weather_impact_df[weather_impact_df['weathersit'].isin(selected_weather)]
+    fig_weather = px.bar(filtered_weather_impact, x="weathersit", y="cnt",
+                         title="Rata-rata Penggunaan Sepeda berdasarkan Kondisi Cuaca",
+                         labels={'weathersit': 'Kondisi Cuaca', 'cnt': 'Rata-rata Total Penyewaan'},
+                         color_discrete_sequence=[COLORS['primary']])
+    st.plotly_chart(fig_weather, use_container_width=True)
 
 # 8. Korelasi antara Temperatur, Kelembapan, dan Kecepatan Angin dengan Total Penyewaan
 with st.expander("Korelasi Kondisi Lingkungan dengan Total Penyewaan"):
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.heatmap(temp_hum_windspeed_df.corr(numeric_only = True), annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
-    ax.set_title("Korelasi antara Temperatur, Kelembapan, Kecepatan Angin, dan Total Penyewaan", loc="center")
-    st.pyplot(fig)
-
+    fig_heatmap, ax_heatmap = plt.subplots(figsize=(8, 6))
+    sns.heatmap(temp_hum_windspeed_df.corr(numeric_only = True), annot=True, cmap="coolwarm", fmt=".2f", ax=ax_heatmap)
+    ax_heatmap.set_title("Korelasi antara Temperatur, Kelembapan, Kecepatan Angin, dan Total Penyewaan", loc="center")
+    st.pyplot(fig_heatmap)
 
 st.caption('Copyright (c) 2025')
