@@ -492,4 +492,36 @@ with st.expander("Analisis Lanjutan: Distribusi Kondisi Cuaca (Weathersit) dalam
     sns.barplot(x='rental_cluster', y='proportion', hue='weathersit_label', data=weathersit_cluster_counts_melted, palette="viridis")
     plt.title('Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda', fontsize=16, fontweight='bold', color="#333333")
     plt.xlabel('Klaster Penyewaan', fontsize=12, color="#666666")
-    plt.ylabel('Proporsi', fontsize
+    plt.ylabel('Proporsi', fontsize=12, color="#666666")
+    plt.xticks(fontsize=10, color="#555555")
+    plt.yticks(fontsize=10, color="#555555")
+    plt.legend(title='Kondisi Cuaca', fontsize=10, title_fontsize=11)
+    plt.tight_layout()
+    st.pyplot(fig)
+
+    st.markdown("---")
+    st.subheader("Insight:")
+    st.write(
+        """
+        Distribusi kondisi cuaca dalam setiap klaster penyewaan memberikan wawasan menarik terkait preferensi pengguna sepeda.
+        Sebagai contoh, kita dapat mengamati apakah klaster tertentu cenderung memiliki proporsi penyewaan yang lebih tinggi
+        pada kondisi cuaca tertentu dibandingkan dengan klaster lainnya.
+
+        **Beberapa poin insight yang mungkin didapatkan dari visualisasi ini:**
+        * **Preferensi Cuaca per Klaster:**  Apakah ada klaster yang secara signifikan lebih banyak melakukan penyewaan saat cuaca cerah/berawan dibandingkan klaster lain? Atau sebaliknya, apakah ada klaster yang tetap aktif meskipun dalam kondisi cuaca yang kurang baik seperti kabut atau hujan ringan?
+        * **Pengaruh Cuaca Ekstrem:** Bagaimana proporsi penyewaan pada kondisi cuaca ekstrem (jika ada) di setiap klaster? Apakah ada klaster yang benar-benar menghindari penyewaan saat cuaca ekstrem?
+        * **Adaptasi Strategi Operasional:**  Pemahaman ini dapat membantu dalam adaptasi strategi operasional untuk setiap klaster. Misalnya, klaster yang kurang sensitif terhadap cuaca buruk mungkin memerlukan lebih banyak unit sepeda yang tersedia secara konsisten, sementara klaster yang sangat bergantung pada cuaca cerah mungkin memerlukan promosi khusus saat cuaca mendukung.
+
+        Analisis lebih lanjut dapat dilakukan dengan menghubungkan distribusi kondisi cuaca ini dengan faktor-faktor lain seperti waktu, hari dalam seminggu, atau bahkan event lokal untuk mendapatkan gambaran yang lebih komprehensif.
+        """
+    )
+
+    st.markdown("---")
+    st.markdown(
+        """
+        **Copyright © [2025] [Julianti-MC172D5X1418]**
+
+        _Dashboard ini dibuat untuk tujuan pemenuhan submission.
+        Penggunaan kode dan visualisasi diharapkan untuk mencantumkan sumber._
+        """
+    )
