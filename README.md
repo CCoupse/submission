@@ -38,7 +38,7 @@ Ingin tahu rahasia di balik ramainya penyewaan sepeda di kota Anda? 🤔  Dashbo
 
 1.  **Clone Repositori Ini:**
     ```bash
-    git clone <URL_repositori_Anda>
+    git clone <https://github.com/CCoupse/submission>
     cd <nama_repositori_Anda>
     ```
 
