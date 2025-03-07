@@ -56,7 +56,7 @@ Ingin tahu rahasia di balik ramainya penyewaan sepeda di kota Anda? 🤔  Dashbo
     *(Jangan lupa ganti `dashboard.py` dengan nama file Python dashboard Anda, contoh: `dashboard_sepeda.py`)*
 
 4.  **Dashboard Siap Diakses di Browser!** 🌐
-    Streamlit akan otomatis membuka dashboard di *browser* web Anda. Jika tidak, kunjungi URL yang muncul di terminal (biasanya `http://localhost:8501`).
+    Streamlit akan otomatis membuka dashboard di *browser* web Anda.
 
 ## 💡  Temukan Insight Berharga dan Tingkatkan Bisnis Sepeda Anda! 💡
 
