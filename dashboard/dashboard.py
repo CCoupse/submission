@@ -159,8 +159,9 @@ st.subheader('Tren Penggunaan Sepeda Berdasarkan Waktu dan Faktor Lainnya', anch
 
 # 1. Tren Penggunaan Sepeda Bulanan
 with st.expander("Tren Penggunaan Sepeda Bulanan"):
-    print(day_df.dtypes) # Tambahkan baris debug untuk cek tipe data dteday
-    day_df['dteday'] = pd.to_datetime(day_df['dteday']) # Pastikan konversi datetime sebelum resample
+    print(day_df.dtypes) # Baris debug: cek *semua* tipe data DataFrame
+    print(day_df['dteday'].dtype) # Baris debug *tambahan*: cek tipe data kolom 'dteday'
+    day_df['dteday'] = pd.to_datetime(day_df['dteday']) # *Pastikan konversi datetime tetap ada*
     monthly_orders_df_day = day_df.resample(rule='M').agg({'cnt': 'sum'})
     monthly_orders_df_day.index = monthly_orders_df_day.index.strftime('%Y-%m')
     monthly_orders_df_day = monthly_orders_df_day.reset_index()
@@ -176,14 +177,14 @@ with st.expander("Tren Penggunaan Sepeda Bulanan"):
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("**Insight Visualisasi Pola Penggunaan Sepeda Bulanan:** \n\n"
+    st.markdown("""**Insight Visualisasi Pola Penggunaan Sepeda Bulanan:** \n\n"
     "Grafik *line chart* di atas menunjukkan total penyewaan sepeda setiap bulan dari Januari 2011 hingga Desember 2012.\n\n"
     "* **Pola Musiman yang Jelas:** Grafik secara visual menegaskan pola musiman yang kuat dalam penyewaan sepeda. Terlihat peningkatan signifikan dimulai dari awal tahun, mencapai puncaknya di musim panas dan awal musim gugur, kemudian menurun drastis menjelang akhir tahun.\n"
     "* **Puncak Musim Panas - Awal Musim Gugur:** Penyewaan mencapai titik tertinggi secara konsisten pada bulan-bulan musim panas dan awal musim gugur, yaitu sekitar bulan Juni hingga September setiap tahunnya. Bulan-bulan seperti Juni, Juli, Agustus, dan September menunjukkan nilai total penyewaan yang paling tinggi.\n"
     "* **Penurunan Musim Dingin dan Awal Tahun:** Terjadi penurunan penyewaan yang signifikan pada bulan-bulan musim dingin dan awal tahun, khususnya pada bulan November, Desember, Januari, dan Februari. Ini adalah periode dengan penyewaan terendah.\n"
     "* **Pertumbuhan Tahunan:** Terlihat adanya peningkatan total penyewaan secara keseluruhan dari tahun 2011 ke 2012. Puncak penyewaan di musim panas 2012 secara umum lebih tinggi dibandingkan puncak di musim panas 2011.\n"
     "* **Pola yang Konsisten:** Pola musiman ini berulang dan konsisten antara tahun 2011 dan 2012, mengindikasikan bahwa faktor musiman adalah pendorong utama variasi dalam penggunaan sepeda sewaan bulanan."
-    )
+    """)
 
 # 2. Tren Penggunaan Sepeda Tahunan
 with st.expander("Tren Penggunaan Sepeda Tahunan"):
@@ -491,21 +492,4 @@ with st.expander("Analisis Lanjutan: Distribusi Kondisi Cuaca (Weathersit) dalam
     sns.barplot(x='rental_cluster', y='proportion', hue='weathersit_label', data=weathersit_cluster_counts_melted, palette="viridis")
     plt.title('Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda', fontsize=16, fontweight='bold', color="#333333")
     plt.xlabel('Klaster Penyewaan', fontsize=12, color="#666666")
-    plt.ylabel('Proporsi', fontsize=12, color="#666666")
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.legend(title='Kondisi Cuaca', fontsize='small', title_fontsize='medium')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    sns.despine()
-    plt.tight_layout()
-    st.pyplot(fig)
-    st.markdown("**Insight Visualisasi Profesional: Analisis Klaster Penyewaan Sepeda Berdasarkan Kondisi Cuaca (Grafik Kondisi Cuaca Kategori):** \n\n"
-    "Grafik *grouped bar chart* ini menampilkan distribusi proporsi kondisi cuaca kategori (*weathersit*) di setiap klaster penyewaan sepeda (Rendah, Sedang, Tinggi).\n\n"
-    "* **Distribusi Proporsi Kondisi Cuaca per Klaster:** Grafik ini memvisualisasikan bagaimana proporsi setiap kategori kondisi cuaca (Cerah/Berawan, Kabut/Awan, Hujan Ringan/Salju Ringan, Cuaca Ekstrem) terdistribusi di dalam masing-masing klaster penyewaan sepeda.\n"
-    "* **Klaster Tinggi Didominasi Cuaca Cerah/Berawan:** Klaster penyewaan 'Tinggi' memiliki proporsi kondisi cuaca *Cerah/Berawan* yang sangat dominan dibandingkan klaster lainnya. Ini menegaskan bahwa penyewaan tinggi sangat terkait dengan kondisi cuaca yang baik.\n"
-    "* **Klaster Rendah Proporsi Cuaca Buruk Lebih Tinggi:** Klaster penyewaan 'Rendah' memiliki proporsi kondisi cuaca *Hujan Ringan/Salju Ringan* dan *Cuaca Ekstrem* yang lebih tinggi dibandingkan klaster lainnya. Ini menunjukkan bahwa kondisi cuaca buruk berkontribusi pada tingkat penyewaan yang rendah.\n"
-    "* **Transisi Proporsi di Klaster Sedang:** Klaster 'Sedang' menunjukkan proporsi kondisi cuaca yang lebih merata, dengan proporsi *Cerah/Berawan* yang lebih rendah dari klaster 'Tinggi' namun lebih tinggi dari klaster 'Rendah', serta proporsi kondisi cuaca buruk yang lebih rendah dari klaster 'Rendah' namun lebih tinggi dari klaster 'Tinggi'.\n"
-    "* **Konfirmasi Pengaruh Kondisi Cuaca Kategori:** Visualisasi ini secara lebih detail mengkonfirmasi bahwa kondisi cuaca kategori (*weathersit*) memiliki pengaruh yang kuat terhadap klaster penyewaan sepeda. Preferensi yang kuat terhadap cuaca cerah/berawan untuk penyewaan sepeda terlihat sangat jelas, dan kondisi cuaca buruk secara signifikan mengurangi proporsi penyewaan tinggi."
-    )
-
-st.caption('Copyright (c) 2025')
+    plt.ylabel('Proporsi', fontsize
