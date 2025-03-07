@@ -94,7 +94,7 @@ st.markdown(
     .stApp {{
         background: linear-gradient(135deg, {PRIMARY_COLOR} , {SECONDARY_COLOR});
         font-family: 'Poppins', sans-serif;
-    }
+    }}
     h1, h2, h3, h4, h5, h6 {{
         color: white; /* Warna teks header menjadi putih untuk kontras dengan gradasi */
         font-weight: 600;
