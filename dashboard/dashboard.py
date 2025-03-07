@@ -376,7 +376,7 @@ with st.expander("Korelasi Temperatur dengan Total Penyewaan"):
     ax.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("**Insight Visualisasi Korelasi Temperatur:** \n\n"
+    st.markdown("""**Insight Visualisasi Korelasi Temperatur:** \n\n"
     "Grafik scatter plot: temperatur vs total penyewaan.\n\n"
     "* **Korelasi Positif Tidak Linear**\n"
     "* **Penyewaan Naik di Temperatur Menengah (0.5-0.7)**\n"
@@ -397,7 +397,7 @@ with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
     ax.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("**Insight Visualisasi Korelasi Kelembapan:** \n\n"
+    st.markdown("""**Insight Visualisasi Korelasi Kelembapan:** \n\n"
     "Grafik scatter plot: kelembapan vs total penyewaan.\n\n"
     "* **Korelasi Negatif Lemah/Tidak Signifikan**\n"
     "* **Sebaran Data Luas**\n"
@@ -417,7 +417,7 @@ with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
     ax.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("**Insight Visualisasi Korelasi Kecepatan Angin:** \n\n"
+    st.markdown("""**Insight Visualisasi Korelasi Kecepatan Angin:** \n\n"
     "Grafik scatter plot: kecepatan angin vs total penyewaan.\n\n"
     "* **Korelasi Negatif Lemah/Tidak Signifikan**\n"
     "* **Sebaran Data Luas, Tidak Berpola**\n"
