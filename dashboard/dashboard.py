@@ -1,25 +1,24 @@
 import pandas as pd
 import plotly.express as px
+import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
-import streamlit as st
 
 # Konfigurasi tampilan halaman Streamlit
 st.set_page_config(page_title="Bike Sharing Dashboard", layout="wide")
 
 # Palet warna gradasi 4 musim yang menarik dan sesuai tema UI modern
 COLORS = {
-    'spring_start': '#C2E5B4',  # Hijau muda untuk awal musim semi
-    'spring_end': '#87CEFA',    # Biru muda untuk akhir musim semi/menuju musim panas
-    'summer_start': '#FFA07A',   # Oranye muda untuk awal musim panas
-    'summer_end': '#FFD700',     # Kuning emas untuk puncak musim panas
-    'fall_start': '#FA8072',     # Salmon untuk awal musim gugur
-    'fall_end': '#D2691E',      # Cokelat tua untuk akhir musim gugur
-    'winter_start': '#B0C4DE',   # Biru kelabu muda untuk awal musim dingin
-    'winter_end': '#FFFFFF',     # Putih untuk puncak musim dingin
-    'text': '#0E1117',           # Warna teks tetap hitam agak gelap
-    'secondary': '#1A5276'      # Warna sekunder untuk elemen UI tertentu
+    'spring_start': '#C2E5B4',
+    'spring_end': '#87CEFA',
+    'summer_start': '#FFA07A',
+    'summer_end': '#FFD700',
+    'fall_start': '#FA8072',
+    'fall_end': '#D2691E',
+    'winter_start': '#B0C4DE',
+    'winter_end': '#FFFFFF',
+    'text': '#0E1117',
+    'secondary': '#1A5276'
 }
 
 # CSS untuk tema gradasi 4 musim dan font Poppins
@@ -166,36 +165,46 @@ with st.sidebar:
     st.subheader("Filter Data", anchor=False)
 
     # Filter Musim
+    st.subheader("Musim", anchor=False) # Judul filter musim
     selected_seasons = st.multiselect("Pilih Musim",
                                         seasonal_usage_df['season'].unique(),
-                                        default=list(seasonal_usage_df['season'].unique()))
+                                        default=list(seasonal_usage_df['season'].unique()),
+                                        key="season_filter") # Tambahkan key
 
     # Filter Bulan
+    st.subheader("Bulan", anchor=False) # Judul filter bulan
     selected_months = st.multiselect("Pilih Bulan",
                                       monthly_usage_df['mnth'].unique(),
-                                      default=list(monthly_usage_df['mnth'].unique()))
+                                      default=list(monthly_usage_df['mnth'].unique()),
+                                      key="month_filter") # Tambahkan key
 
     # Filter Hari dalam Seminggu
+    st.subheader("Hari dalam Seminggu", anchor=False) # Judul filter hari
     selected_weekdays = st.multiselect("Pilih Hari dalam Seminggu",
                                         weekday_usage_df['weekday'].unique(),
-                                        default=list(weekday_usage_df['weekday'].unique()))
+                                        default=list(weekday_usage_df['weekday'].unique()),
+                                        key="weekday_filter") # Tambahkan key
 
     # Filter Tahun
+    st.subheader("Tahun", anchor=False) # Judul filter tahun
     selected_years = st.multiselect("Pilih Tahun",
                                       yearly_usage_df['yr'].unique(),
-                                      default=list(yearly_usage_df['yr'].unique()))
+                                      default=list(yearly_usage_df['yr'].unique()),
+                                      key="year_filter") # Tambahkan key
 
     # Filter Kondisi Cuaca
+    st.subheader("Kondisi Cuaca", anchor=False) # Judul filter cuaca
     selected_weather = st.multiselect("Pilih Kondisi Cuaca",
                                          weather_impact_df['weathersit'].unique(),
-                                         default=list(weather_impact_df['weathersit'].unique()))
+                                         default=list(weather_impact_df['weathersit'].unique()),
+                                         key="weather_filter") # Tambahkan key
 
 # Judul Visualisasi Data
 st.subheader('Tren Penggunaan Sepeda Berdasarkan Waktu dan Faktor Lainnya', anchor=False)
 
 # 1. Tren Total Penyewaan Sepeda Bulanan (Line Chart)
 with st.expander("Tren Total Penyewaan Sepeda Bulanan", expanded=True):
-    monthly_orders_df_day = day_df.resample(rule='M').agg({'cnt': 'sum'})
+    monthly_orders_df_day = day_df.resample(rule='M').agg({'cnt': 'sum'}) # Perbaikan: Gunakan dictionary untuk agg
     monthly_orders_df_day.index = monthly_orders_df_day.index.strftime('%Y-%m')
     monthly_orders_df_day = monthly_orders_df_day.reset_index()
     monthly_orders_df_day.rename(columns={'dteday': 'month', 'cnt': 'total_rentals'}, inplace=True)
@@ -211,13 +220,10 @@ with st.expander("Tren Total Penyewaan Sepeda Bulanan", expanded=True):
 
 # 2. Perbandingan Total Penyewaan Sepeda Tahunan (Bar Chart)
 with st.expander("Perbandingan Total Penyewaan Sepeda Tahunan"):
-    yearly_orders_df_day = day_df.groupby('yr').agg({'cnt': 'sum'}).reset_index()
-    yearly_orders_df_day['yr'] = yearly_orders_df_day['yr'].map({0: 2011, 1: 2012})
-    yearly_orders_df_day.rename(columns={'yr': 'year', 'cnt': 'total_rentals'}, inplace=True)
-
-    fig_yearly_bar = px.bar(yearly_orders_df_day, x='year', y='total_rentals',
+    yearly_orders_df_day = yearly_usage_df
+    fig_yearly_bar = px.bar(yearly_orders_df_day, x='yr', y='cnt',
                             title="Total Penyewaan Sepeda per Tahun",
-                            labels={'year': 'Tahun', 'total_rentals': 'Total Penyewaan'},
+                            labels={'yr': 'Tahun', 'cnt': 'Total Penyewaan'},
                             color_discrete_sequence=[COLORS['summer_start']])
     st.plotly_chart(fig_yearly_bar, use_container_width=True)
     st.markdown("**Insight:** Terjadi peningkatan signifikan hampir dua kali lipat dalam total penyewaan sepeda dari tahun 2011 ke 2012, menunjukkan tren pertumbuhan positif.")
@@ -225,14 +231,11 @@ with st.expander("Perbandingan Total Penyewaan Sepeda Tahunan"):
 
 # 3. Total Penyewaan Sepeda per Musim (Bar Chart)
 with st.expander("Total Penyewaan Sepeda per Musim"):
-    seasonal_orders_df_day = seasonal_usage_df.groupby('season').agg({'cnt': 'sum'}).reset_index()
-    seasonal_orders_df_day['season'] = seasonal_orders_df_day['season'].map({1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'})
-    seasonal_orders_df_day.rename(columns={'season': 'season_name', 'cnt': 'total_rentals'}, inplace=True)
-
-    fig_seasonal_bar = px.bar(seasonal_orders_df_day, x='season_name', y='total_rentals',
+    seasonal_orders_df_day = seasonal_usage_df
+    fig_seasonal_bar = px.bar(seasonal_orders_df_day, x='season', y='cnt',
                              title="Total Penyewaan Sepeda per Musim",
-                             labels={'season_name': 'Musim', 'total_rentals': 'Total Penyewaan'},
-                             category_orders={"season_name": ['Spring', 'Summer', 'Fall', 'Winter']},
+                             labels={'season': 'Musim', 'cnt': 'Total Penyewaan'},
+                             category_orders={"season": ['Spring', 'Summer', 'Fall', 'Winter']},
                              color_discrete_sequence=[COLORS['fall_start']])
     st.plotly_chart(fig_seasonal_bar, use_container_width=True)
     st.markdown("**Insight:** Musim gugur memiliki total penyewaan tertinggi, diikuti musim panas, musim dingin, dan musim semi yang terendah, menegaskan pengaruh cuaca yang nyaman.")
@@ -278,13 +281,10 @@ with st.expander("Rata-rata Penyewaan Sepeda pada Hari Libur vs. Bukan Hari Libu
 
 # 7. Rata-rata Penyewaan Sepeda pada Hari Kerja vs. Bukan Hari Kerja (Bar Chart)
 with st.expander("Rata-rata Penyewaan Sepeda pada Hari Kerja vs. Bukan Hari Kerja"):
-    workingday_orders_df_day = day_df.groupby('workingday').agg({'cnt': 'mean'}).reset_index()
-    workingday_orders_df_day['workingday'] = workingday_orders_df_day['workingday'].map({0: 'Bukan Hari Kerja', 1: 'Hari Kerja'})
-    workingday_orders_df_day.rename(columns={'workingday': 'workingday_status', 'cnt': 'average_rentals'}, inplace=True)
-
-    fig_workingday_bar = px.bar(workingday_orders_df_day, x='workingday_status', y='average_rentals',
+    workingday_orders_df_day = workingday_usage_df
+    fig_workingday_bar = px.bar(workingday_orders_df_day, x='workingday', y='cnt',
                                 title="Rata-rata Penyewaan Sepeda pada Hari Kerja vs. Bukan Hari Kerja",
-                                labels={'workingday_status': 'Status Hari Kerja', 'average_rentals': 'Rata-rata Penyewaan'},
+                                labels={'workingday': 'Status Hari Kerja', 'cnt': 'Rata-rata Penyewaan'},
                                 color_discrete_sequence=[COLORS['fall_end']])
     st.plotly_chart(fig_workingday_bar, use_container_width=True)
     st.markdown("**Insight:** Rata-rata penyewaan sedikit lebih tinggi pada hari kerja, mengindikasikan penggunaan untuk komuting atau aktivitas terkait pekerjaan.")
