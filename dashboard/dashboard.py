@@ -135,23 +135,23 @@ with st.sidebar:
     st.subheader("Filter Data", anchor=False)
 
     # Filter Tahun
-    selected_years = st.multiselect("Pilih Tahun", yearly_usage_df['yr'].unique(), default=) # Default jadi list kosong
+    selected_years = st.multiselect("Pilih Tahun", yearly_usage_df['yr'].unique(), default=[]) # Default jadi list kosong
     filtered_yearly_usage_df = yearly_usage_df[yearly_usage_df['yr'].isin(selected_years)]
 
     # Filter Musim
-    selected_seasons = st.multiselect("Pilih Musim", seasonal_usage_df['season'].unique(), default=) # Default jadi list kosong
+    selected_seasons = st.multiselect("Pilih Musim", seasonal_usage_df['season'].unique(), default=[]) # Default jadi list kosong
     filtered_seasonal_usage_df = seasonal_usage_df[seasonal_usage_df['season'].isin(selected_seasons)]
 
     # Filter Bulan
-    selected_months = st.multiselect("Pilih Bulan", monthly_usage_df['mnth'].unique(), default=) # Default jadi list kosong
+    selected_months = st.multiselect("Pilih Bulan", monthly_usage_df['mnth'].unique(), default=[]) # Default jadi list kosong
     filtered_monthly_usage_df = monthly_usage_df[monthly_usage_df['mnth'].isin(selected_months)]
 
     # Filter Hari dalam Seminggu
-    selected_weekdays = st.multiselect("Pilih Hari dalam Seminggu", weekday_usage_df['weekday'].unique(), default=) # Default jadi list kosong
+    selected_weekdays = st.multiselect("Pilih Hari dalam Seminggu", weekday_usage_df['weekday'].unique(), default=[]) # Default jadi list kosong
     filtered_weekday_usage_df = weekday_usage_df[weekday_usage_df['weekday'].isin(selected_weekdays)]
 
     # Filter Kondisi Cuaca
-    selected_weather = st.multiselect("Pilih Kondisi Cuaca", weather_impact_df['weathersit'].unique(), default=) # Default jadi list kosong
+    selected_weather = st.multiselect("Pilih Kondisi Cuaca", weather_impact_df['weathersit'].unique(), default=[]) # Default jadi list kosong
     filtered_weather_impact_df = weather_impact_df[weather_impact_df['weathersit'].isin(selected_weather)]
 
 
@@ -355,10 +355,157 @@ with st.expander("Pengaruh Kondisi Cuaca terhadap Penggunaan Sepeda"):
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("**Insight Visualisasi Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca:** \n\n"
+    st.markdown("""**Insight Visualisasi Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca:** \n\n"
     "Grafik *bar chart* di atas menggambarkan rata-rata jumlah penyewaan sepeda dalam berbagai kondisi cuaca.\n\n"
     "* **Pengaruh Kondisi Cuaca Signifikan:** Grafik ini secara jelas menunjukkan bahwa kondisi cuaca memiliki pengaruh yang signifikan terhadap rata-rata penyewaan sepeda. Terdapat perbedaan yang mencolok dalam jumlah penyewaan antara kondisi cuaca yang berbeda.\n"
     "* **Penyewaan Tertinggi saat Cerah/Berawan:** Kondisi cuaca *Cerah/Berawan* mencatatkan rata-rata penyewaan sepeda yang paling tinggi. Bar pada kategori ini jauh lebih tinggi dibandingkan kategori lainnya, mengindikasikan bahwa cuaca cerah sangat mendukung aktivitas bersepeda.\n"
     "* **Penurunan Penyewaan saat Kabut/Awan:**  Rata-rata penyewaan sepeda menurun pada kondisi cuaca *Kabut/Awan*. Meskipun masih cukup tinggi, jumlahnya lebih rendah dibandingkan saat cuaca cerah, menunjukkan bahwa kondisi berkabut atau berawan mengurangi minat bersepeda.\n"
     "* **Penyewaan Terendah saat Hujan Ringan/Salju Ringan:** Kondisi cuaca *Hujan Ringan/Salju Ringan* menghasilkan rata-rata penyewaan sepeda yang paling rendah. Bar pada kategori ini adalah yang terpendek, menandakan bahwa cuaca buruk seperti hujan ringan atau salju ringan sangat menghambat aktivitas penyewaan sepeda.\n"
-    "* **Preferensi Cuaca Cerah untuk Bersepeda:** Secara keseluruhan, visualisasi ini menegaskan bahwa cuaca cerah dan berawan adalah kondisi yang paling disukai untuk bersepeda, sementara cuaca yang kurang
+    "* **Preferensi Cuaca Cerah untuk Bersepeda:** Secara keseluruhan, visualisasi ini menegaskan bahwa cuaca cerah dan berawan adalah kondisi yang paling disukai untuk bersepeda, sementara cuaca yang kurang baik seperti kabut, awan, hujan ringan, atau salju ringan secara signifikan mengurangi minat masyarakat untuk menyewa sepeda."
+    """)
+
+# 9. Hubungan antara Temperatur dan Total Penyewaan Sepeda
+with st.expander("Korelasi Temperatur dengan Total Penyewaan"):
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.scatterplot(x='temp', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7)
+    ax.set_title("Hubungan antara Temperatur dan Total Penyewaan Sepeda", loc="center", fontsize=16, color="#333333")
+    ax.set_xlabel("Temperatur (Normalized)", fontsize=12, color="#666666")
+    ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
+    ax.tick_params(axis='x', labelsize=10)
+    ax.tick_params(axis='y', labelsize=10)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    st.pyplot(fig)
+    st.markdown("**Insight Visualisasi Hubungan antara Temperatur dan Total Penyewaan Sepeda:** \n\n"
+    "Grafik *scatter plot* atau diagram pencar di atas menggambarkan hubungan antara temperatur (yang dinormalisasi) dengan total penyewaan sepeda.\n\n"
+    "* **Korelasi Positif yang Tidak Linear:** Grafik menunjukkan adanya korelasi positif antara temperatur dan total penyewaan sepeda, namun hubungan ini tidak sepenuhnya linear. Seiring dengan kenaikan temperatur, total penyewaan cenderung meningkat, tetapi peningkatan ini tidak terjadi secara proporsional dan cenderung melambat pada temperatur yang sangat tinggi.\n"
+    "* **Peningkatan Penyewaan pada Temperatur Menengah:** Terlihat bahwa penyewaan sepeda meningkat signifikan saat temperatur berada dalam rentang menengah (sekitar 0.5 hingga 0.7 pada skala normalized). Pada rentang temperatur ini, titik-titik data terlihat lebih padat di area penyewaan yang lebih tinggi.\n"
+    "* **Plateau atau Penurunan pada Temperatur Tinggi:** Pada temperatur yang sangat tinggi (di atas 0.7 normalized), peningkatan total penyewaan mulai melambat atau bahkan cenderung mendatar.  Sebaran titik data pada temperatur tinggi terlihat lebih luas secara vertikal, mengindikasikan variasi penyewaan yang lebih besar dan tidak lagi meningkat secara konsisten.\n"
+    "* **Temperatur Optimal untuk Penyewaan:**  Temperatur dalam rentang menengah tampaknya menjadi kondisi yang paling optimal untuk penyewaan sepeda. Di rentang ini, kita melihat konsentrasi penyewaan tertinggi.\n"
+    "* **Pengaruh Temperatur terhadap Permintaan Sepeda:** Secara keseluruhan, visualisasi ini menunjukkan bahwa temperatur adalah faktor penting yang memengaruhi permintaan penyewaan sepeda. Temperatur yang terlalu rendah atau terlalu tinggi mungkin kurang ideal, sementara temperatur yang nyaman (menengah) mendorong lebih banyak orang untuk menggunakan layanan penyewaan sepeda."
+    )
+
+# 10. Hubungan antara Kelembapan dan Total Penyewaan Sepeda
+with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.scatterplot(x='hum', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7)
+    ax.set_title("Hubungan antara Kelembapan dan Total Penyewaan Sepeda", loc="center", fontsize=16, color="#333333")
+    ax.set_xlabel("Kelembapan (Normalized)", fontsize=12, color="#666666")
+    ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
+    ax.tick_params(axis='x', labelsize=10)
+    ax.tick_params(axis='y', labelsize=10)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    st.pyplot(fig)
+    st.markdown("**Insight Visualisasi Hubungan antara Kelembapan dan Total Penyewaan Sepeda:** \n\n"
+    "Grafik *scatter plot* atau diagram pencar di atas menggambarkan hubungan antara kelembapan (yang dinormalisasi) dengan total penyewaan sepeda.\n\n"
+    "* **Korelasi Negatif Lemah atau Tidak Signifikan:** Berbeda dengan temperatur, grafik ini menunjukkan korelasi yang lemah atau bahkan tidak signifikan antara kelembapan dan total penyewaan sepeda. Tidak terlihat pola yang jelas yang mengindikasikan bahwa peningkatan atau penurunan kelembapan secara langsung memengaruhi total penyewaan secara keseluruhan.\n"
+    "* **Sebaran Data yang Luas pada Berbagai Tingkat Kelembapan:** Titik-titik data tersebar secara luas di berbagai tingkat kelembapan (dari 0.0 hingga 1.0 normalized). Ini menunjukkan bahwa total penyewaan sepeda bervariasi secara signifikan, terlepas dari tingkat kelembapan.\n"
+    "* **Tidak Ada Pola Linear yang Jelas:**  Tidak seperti grafik temperatur, tidak ada pola linear yang jelas yang dapat diamati di sini. Baik pada tingkat kelembapan rendah, menengah, maupun tinggi, kita dapat menemukan titik-titik data dengan total penyewaan yang tinggi maupun rendah.\n"
+    "* **Faktor Kelembapan Bukan Pendorong Utama:** Visualisasi ini mengindikasikan bahwa kelembapan, setidaknya dalam rentang data yang diukur, bukanlah faktor pendorong utama yang menentukan total penyewaan sepeda. Faktor lain mungkin lebih berperan.\n"
+    "* **Kemungkinan Faktor Lain Lebih Dominan:**  Meskipun kelembapan mungkin memiliki pengaruh kecil, faktor-faktor lain seperti temperatur, kondisi cuaca secara keseluruhan (misalnya hujan), hari libur, atau bahkan faktor sosial ekonomi kemungkinan memiliki dampak yang lebih besar dan lebih dominan terhadap total penyewaan sepeda dibandingkan dengan kelembapan."
+    )
+
+# 11. Hubungan antara Kecepatan Angin dan Total Penyewaan Sepeda
+with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.scatterplot(x='windspeed', y='cnt', data=day_df, color=PRIMARY_COLOR, alpha=0.7)
+    ax.set_title("Hubungan antara Kecepatan Angin dan Total Penyewaan Sepeda", loc="center", fontsize=16, color="#333333")
+    ax.set_xlabel("Kecepatan Angin (Normalized)", fontsize=12, color="#666666")
+    ax.set_ylabel("Total Penyewaan", fontsize=12, color="#666666")
+    ax.tick_params(axis='x', labelsize=10)
+    ax.tick_params(axis='y', labelsize=10)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    st.pyplot(fig)
+    st.markdown("**Insight Visualisasi Hubungan antara Kecepatan Angin dan Total Penyewaan Sepeda:** \n\n"
+    "Grafik *scatter plot* atau diagram pencar di atas menggambarkan hubungan antara kecepatan angin (yang dinormalisasi) dengan total penyewaan sepeda.\n\n"
+    "* **Korelasi Negatif Lemah:** Grafik ini menunjukkan adanya korelasi negatif yang lemah antara kecepatan angin dan total penyewaan sepeda. Secara umum, terlihat kecenderungan penurunan total penyewaan seiring dengan peningkatan kecepatan angin, namun korelasi ini tidak terlalu kuat.\n"
+    "* **Penyewaan Lebih Tinggi pada Kecepatan Angin Rendah:**  Sebagian besar titik data dengan total penyewaan yang lebih tinggi terkonsentrasi pada area kecepatan angin yang rendah (di bawah 0.2 normalized). Ini mengindikasikan bahwa penyewaan sepeda cenderung lebih banyak terjadi saat kecepatan angin rendah.\n"
+    "* **Sebaran Penyewaan Menurun pada Kecepatan Angin Tinggi:** Sebaran titik data menjadi lebih renggang dan cenderung menurun secara vertikal seiring dengan peningkatan kecepatan angin (di atas 0.2 normalized). Ini menunjukkan bahwa pada kecepatan angin yang lebih tinggi, total penyewaan cenderung lebih rendah dan lebih bervariasi.\n"
+    "* **Kecepatan Angin Rendah Lebih Disukai untuk Bersepeda:** Visualisasi ini mengisyaratkan bahwa kecepatan angin rendah lebih disukai untuk aktivitas bersepeda. Kondisi angin yang tenang atau tidak terlalu kencang mungkin lebih nyaman dan aman bagi pengguna sepeda.\n"
+    "* **Pengaruh Kecepatan Angin Terbatas:** Meskipun ada korelasi negatif, sebaran data yang cukup luas menunjukkan bahwa kecepatan angin mungkin bukan satu-satunya atau faktor terkuat yang memengaruhi total penyewaan sepeda. Faktor-faktor lain seperti temperatur, kondisi cuaca lain, atau faktor non-cuaca mungkin juga berperan signifikan."
+    )
+
+# Analisis Lanjutan (Opsional) Visualizations
+
+# 12. Perbandingan Kondisi Cuaca Rata-rata Berdasarkan Klaster Penyewaan Sepeda
+with st.expander("Analisis Lanjutan: Perbandingan Kondisi Cuaca Rata-rata Berdasarkan Klaster Penyewaan Sepeda"):
+    # Define rental clusters
+    rental_thresholds = day_df['cnt'].quantile([0.33, 0.67])
+    def categorize_rental(rental_count):
+        if rental_count <= rental_thresholds[0.33]:
+            return 'Rendah'
+        elif rental_count <= rental_thresholds[0.67]:
+            return 'Sedang'
+        else:
+            return 'Tinggi'
+    day_df['rental_cluster'] = day_df['cnt'].apply(categorize_rental)
+
+    # Group data and calculate means
+    cluster_weather_stats = day_df.groupby('rental_cluster')[['temp', 'hum', 'windspeed', 'weathersit']].mean().reset_index()
+    cluster_weather_melted = pd.melt(cluster_weather_stats, id_vars=['rental_cluster'], var_name='weather_feature', value_name='average_value')
+
+    # Labels for features
+    feature_labels = {
+        'temp': 'Temperatur (Normalized)',
+        'hum': 'Kelembapan (Normalized)',
+        'windspeed': 'Kecepatan Angin (Normalized)'
+    }
+    cluster_weather_melted['weather_feature'] = cluster_weather_melted['weather_feature'].map(feature_labels).fillna(cluster_weather_melted['weather_feature'])
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.barplot(x='rental_cluster', y='average_value', hue='weather_feature', data=cluster_weather_melted, palette="viridis")
+    plt.title('Perbandingan Kondisi Cuaca Rata-rata Berdasarkan Klaster Penyewaan Sepeda', fontsize=16, fontweight='bold', color="#333333")
+    plt.xlabel('Klaster Penyewaan', fontsize=12, color="#666666")
+    plt.ylabel('Nilai Rata-rata (Normalized)', fontsize=12, color="#666666")
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(title='Fitur Cuaca', fontsize='small', title_fontsize='medium')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    sns.despine()
+    plt.tight_layout()
+    st.pyplot(fig)
+    st.markdown("**Insight Visualisasi Profesional: Analisis Klaster Penyewaan Sepeda Berdasarkan Kondisi Cuaca (Grafik Fitur Cuaca):** \n\n"
+    "Grafik *grouped bar chart* ini membandingkan kondisi cuaca rata-rata di antara klaster penyewaan sepeda yang berbeda (Rendah, Sedang, Tinggi).\n\n"
+    "* **Perbandingan Klaster Berdasarkan Fitur Cuaca:** Grafik ini memvisualisasikan perbedaan nilai rata-rata untuk fitur-fitur cuaca (Temperatur, Kelembapan, Kecepatan Angin) di setiap klaster penyewaan sepeda. Setiap grup batang (*bar*) merepresentasikan klaster penyewaan, dan batang-batang dalam setiap grup menunjukkan nilai rata-rata untuk fitur cuaca yang berbeda.\n"
+    "* **Temperatur Meningkat Seiring Klaster Penyewaan:** Terlihat adanya tren peningkatan temperatur rata-rata seiring dengan peningkatan klaster penyewaan dari Rendah ke Tinggi. Klaster 'Tinggi' memiliki rata-rata temperatur yang paling tinggi, diikuti 'Sedang', dan kemudian 'Rendah'.\n"
+    "* **Kelembapan Menurun di Klaster Penyewaan Tinggi:** Sebaliknya, kelembapan rata-rata cenderung menurun seiring dengan peningkatan klaster penyewaan. Klaster 'Rendah' memiliki rata-rata kelembapan tertinggi, dan klaster 'Tinggi' memiliki yang terendah.\n"
+    "* **Kecepatan Angin Relatif Seragam:** Kecepatan angin rata-rata terlihat relatif seragam di ketiga klaster penyewaan. Tidak ada perbedaan yang mencolok antar klaster untuk fitur ini.\n"
+    "* **Implikasi Kondisi Cuaca terhadap Klaster Penyewaan:** Visualisasi ini mengindikasikan bahwa temperatur dan kelembapan adalah faktor lingkungan yang membedakan klaster-klaster penyewaan sepeda. Klaster dengan tingkat penyewaan tinggi cenderung terjadi pada kondisi temperatur yang lebih hangat dan kelembapan yang lebih rendah. Kecepatan angin tampaknya tidak menjadi faktor pembeda yang signifikan antar klaster."
+    )
+
+# 13. Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda
+with st.expander("Analisis Lanjutan: Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda"):
+    weathersit_labels = {
+        1: 'Cerah/Berawan',
+        2: 'Kabut/Awan',
+        3: 'Hujan Ringan/Salju Ringan',
+        4: 'Cuaca Ekstrem'
+    }
+    weathersit_cluster_counts = day_df.groupby('rental_cluster')['weathersit'].value_counts(normalize=True).unstack(fill_value=0).reset_index()
+    weathersit_cluster_counts_melted = pd.melt(weathersit_cluster_counts, id_vars=['rental_cluster'], var_name='weathersit', value_name='proportion')
+    weathersit_cluster_counts_melted['weathersit_label'] = weathersit_cluster_counts_melted['weathersit'].map(weathersit_labels)
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.barplot(x='rental_cluster', y='proportion', hue='weathersit_label', data=weathersit_cluster_counts_melted, palette="viridis")
+    plt.title('Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda', fontsize=16, fontweight='bold', color="#333333")
+    plt.xlabel('Klaster Penyewaan', fontsize=12, color="#666666")
+    plt.ylabel('Proporsi', fontsize=12, color="#666666")
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(title='Kondisi Cuaca', fontsize='small', title_fontsize='medium')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    sns.despine()
+    plt.tight_layout()
+    st.pyplot(fig)
+    st.markdown("**Insight Visualisasi Profesional: Analisis Klaster Penyewaan Sepeda Berdasarkan Kondisi Cuaca (Grafik Kondisi Cuaca Kategori):** \n\n"
+    "Grafik *grouped bar chart* ini menampilkan distribusi proporsi kondisi cuaca kategori (*weathersit*) di setiap klaster penyewaan sepeda (Rendah, Sedang, Tinggi).\n\n"
+    "* **Distribusi Proporsi Kondisi Cuaca per Klaster:** Grafik ini memvisualisasikan bagaimana proporsi setiap kategori kondisi cuaca (Cerah/Berawan, Kabut/Awan, Hujan Ringan/Salju Ringan, Cuaca Ekstrem) terdistribusi di dalam masing-masing klaster penyewaan sepeda.\n"
+    "* **Klaster Tinggi Didominasi Cuaca Cerah/Berawan:** Klaster penyewaan 'Tinggi' memiliki proporsi kondisi cuaca *Cerah/Berawan* yang sangat dominan dibandingkan klaster lainnya. Ini menegaskan bahwa penyewaan tinggi sangat terkait dengan kondisi cuaca yang baik.\n"
+    "* **Klaster Rendah Proporsi Cuaca Buruk Lebih Tinggi:** Klaster penyewaan 'Rendah' memiliki proporsi kondisi cuaca *Hujan Ringan/Salju Ringan* dan *Cuaca Ekstrem* yang lebih tinggi dibandingkan klaster lainnya. Ini menunjukkan bahwa kondisi cuaca buruk berkontribusi pada tingkat penyewaan yang rendah.\n"
+    "* **Transisi Proporsi di Klaster Sedang:** Klaster 'Sedang' menunjukkan proporsi kondisi cuaca yang lebih merata, dengan proporsi *Cerah/Berawan* yang lebih rendah dari klaster 'Tinggi' namun lebih tinggi dari klaster 'Rendah', serta proporsi kondisi cuaca buruk yang lebih rendah dari klaster 'Rendah' namun lebih tinggi dari klaster 'Tinggi'.\n"
+    "* **Konfirmasi Pengaruh Kondisi Cuaca Kategori:** Visualisasi ini secara lebih detail mengkonfirmasi bahwa kondisi cuaca kategori (*weathersit*) memiliki pengaruh yang kuat terhadap klaster penyewaan sepeda. Preferensi yang kuat terhadap cuaca cerah/berawan untuk penyewaan sepeda terlihat sangat jelas, dan kondisi cuaca buruk secara signifikan mengurangi proporsi penyewaan tinggi."
+    )
+
+st.caption('Copyright (c) 2025')
