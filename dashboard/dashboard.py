@@ -146,9 +146,7 @@ st.markdown(
         border-radius: 10px;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }}
-    .stMultiSelect>label, .stSelectbox>label, .stNumberInput>label, .stDateInput>label, .stTimeInput>label {{
-        color: white; /* Label filter sidebar */
-    }}
+
 
     </style>
     """,
@@ -157,32 +155,6 @@ st.markdown(
 
 # Header dashboard
 st.header("Bike Sharing Analysis Dashboard :bike:", anchor=False)
-
-# Sidebar filter interaktif
-with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_bicycle.svg/1200px-Font_Awesome_5_solid_bicycle.svg.png", width=90)
-    st.subheader("Filter Data Interaktif", anchor=False)
-    st.markdown("Pilih filter untuk visualisasi:",  unsafe_allow_html=True)
-
-    # Filter Tahun
-    selected_years = st.multiselect("Tahun", yearly_usage_df['yr'].unique(), default=list(yearly_usage_df['yr'].unique()))
-    filtered_yearly_usage_df = yearly_usage_df[yearly_usage_df['yr'].isin(selected_years)]
-
-    # Filter Musim
-    selected_seasons = st.multiselect("Musim", seasonal_usage_df['season'].unique(), default=list(seasonal_usage_df['season'].unique()))
-    filtered_seasonal_usage_df = seasonal_usage_df[seasonal_usage_df['season'].isin(selected_seasons)]
-
-    # Filter Bulan
-    selected_months = st.multiselect("Bulan", monthly_usage_df['mnth'].unique(), default=list(monthly_usage_df['mnth'].unique()))
-    filtered_monthly_usage_df = monthly_usage_df[monthly_usage_df['mnth'].isin(selected_months)]
-
-    # Filter Hari dalam Seminggu
-    selected_weekdays = st.multiselect("Hari dalam Seminggu", weekday_usage_df['weekday'].unique(), default=list(weekday_usage_df['weekday'].unique()))
-    filtered_weekday_usage_df = weekday_usage_df[weekday_usage_df['weekday'].isin(selected_weekdays)]
-
-    # Filter Kondisi Cuaca
-    selected_weather = st.multiselect("Kondisi Cuaca", weather_impact_df['weathersit'].unique(), default=list(weather_impact_df['weathersit'].unique()))
-    filtered_weather_impact_df = weather_impact_df[weather_impact_df['weathersit'].isin(selected_weather)]
 
 
 st.subheader('Tren Penggunaan Sepeda Berdasarkan Waktu dan Faktor Lainnya', anchor=False)
@@ -411,7 +383,7 @@ with st.expander("Korelasi Temperatur dengan Total Penyewaan"):
     "* **Plateau/Penurunan di Temperatur Tinggi (>0.7)**\n"
     "* **Temperatur Menengah Optimal**\n"
     "* **Temperatur Faktor Permintaan**"
-    )
+    """)
 
 # 10. Korelasi Kelembapan
 with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
@@ -431,7 +403,7 @@ with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
     "* **Sebaran Data Luas**\n"
     "* **Kelembapan Bukan Faktor Dominan**\n"
     "* **Fokus Faktor Lain**"
-    )
+    """)
 
 # 11. Korelasi Kecepatan Angin
 with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
@@ -451,7 +423,7 @@ with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
     "* **Sebaran Data Luas, Tidak Berpola**\n"
     "* **Kecepatan Angin Bukan Faktor Utama**\n"
     "* **Fokus Faktor Berpengaruh Lain**"
-    )
+    """)
 
 # 12. Distribusi Jam Kerja vs Akhir Pekan
 with st.expander("Distribusi Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir Pekan"):
@@ -479,9 +451,6 @@ with st.expander("Distribusi Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir
     "* **Operasional: Bedakan Hari Kerja vs Akhir Pekan**"
     """)
 
-# Bagian Visualisasi Nomor 13 DIHAPUS (karena kolom 'rental_cluster' tidak ada)
-# Jika Anda ingin menggunakan visualisasi ini, Anda perlu menambahkan kolom 'rental_cluster' ke day_df terlebih dahulu.
-# Ini mungkin melibatkan pemuatan kolom dari dataset lain atau melakukan analisis klasterisasi.
 
     st.markdown("---")
     st.markdown(
