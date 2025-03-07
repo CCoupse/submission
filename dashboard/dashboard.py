@@ -2,13 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
-# from babel.numbers import format_currency  # Baris ini dikomentari
 
-# Set tema seaborn dan warna Streamlit
-sns.set(style='whitegrid')
-PRIMARY_COLOR = "#29B5DA" # Warna utama yang menarik
+# Warna utama yang menarik
+PRIMARY_COLOR = "#29B5DA"
+SECONDARY_COLOR = "#007BFF" # Warna sekunder untuk gradasi
 
-# Fungsi untuk menyiapkan DataFrame yang dibutuhkan
+# Fungsi-fungsi untuk menyiapkan DataFrame
 def create_hourly_usage_df(df):
     hourly_usage_df = df.groupby("hr").agg({"cnt": "mean"}).reset_index()
     return hourly_usage_df
@@ -86,72 +85,96 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Tambahkan CSS untuk kustomisasi lebih lanjut
+# Kustomisasi CSS dengan gradasi latar belakang dan font Poppins
 st.markdown(
-    """
+    f"""
     <style>
-    .stApp {
-        background-color: #f0f2f6;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    .stApp {{
+        background: linear-gradient(135deg, {PRIMARY_COLOR} , {SECONDARY_COLOR});
+        font-family: 'Poppins', sans-serif;
     }
-    .st-header {
-        background-color: rgba(0,0,0,0);
-    }
-    .css-164nlkn {
-        background-color: #ffffff;
-        padding: 20px 20px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0,0,0,.15);
-        margin-bottom: 20px;
-    }
-    h1, h2, h3, h4, h5, h6 {
-        color: #333333;
-    }
-    p, div {
-        color: #666666;
-    }
-    .stExpander {
-        border: 1px solid #e0e0e0;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
-    .stButton>button {
+    h1, h2, h3, h4, h5, h6 {{
+        color: white; /* Warna teks header menjadi putih untuk kontras dengan gradasi */
+        font-weight: 600;
+    }}
+    p, div, .stExpanderHeader {{
+        color: #e0e0e0; /* Warna teks paragraf dan div lebih terang */
+    }}
+    .stExpander {{
+        background-color: rgba(255, 255, 255, 0.1); /* Latar belakang expander sedikit transparan */
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-bottom: 15px;
+    }}
+    .stExpanderHeader {{
         color: white;
-        background-color: """ + PRIMARY_COLOR + """;
-        border: none;
+    }}
+    .stButton>button {{
+        color: white;
+        background-color: {PRIMARY_COLOR};
+        border: 2px solid white; /* Border putih untuk tombol */
         border-radius: 5px;
         padding: 10px 20px;
-    }
+        font-weight: 500;
+        transition: all 0.3s;
+    }}
+    .stButton>button:hover {{
+        background-color: {SECONDARY_COLOR}; /* Efek hover yang lebih hidup */
+        border-color: {PRIMARY_COLOR};
+    }}
+    .css-164nlkn {{ /* Container utama untuk konten expander */
+        background-color: rgba(255, 255, 255, 0.85); /* Container konten expander lebih solid */
+        padding: 20px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+    }}
+    .css-1cio02g {{ /* Style untuk sidebar */
+        background-color: rgba(255, 255, 255, 0.9);
+        padding-top: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }}
+    .stMultiSelect>label, .stSelectbox>label, .stNumberInput>label, .stDateInput>label, .stTimeInput>label {{
+        color: white; /* Label filter sidebar berwarna putih */
+    }}
+
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-
+# Header dashboard
 st.header("Bike Sharing Analysis Dashboard :bike:", anchor=False)
 
-# Sidebar interaktif
+# Sidebar interaktif dengan tampilan lebih modern
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_bicycle.svg/1200px-Font_Awesome_5_solid_bicycle.svg.png", width=100)
-    st.subheader("Filter Data", anchor=False)
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_bicycle.svg/1200px-Font_Awesome_5_solid_bicycle.svg.png", width=90)
+    st.subheader("Filter Data Interaktif", anchor=False)
+    st.markdown("Pilih filter di bawah ini untuk menyesuaikan visualisasi:",  unsafe_allow_html=True)
 
     # Filter Tahun
-    selected_years = st.multiselect("Pilih Tahun", yearly_usage_df['yr'].unique(), default=[]) # Default jadi list kosong
+    selected_years = st.multiselect("Tahun", yearly_usage_df['yr'].unique(), default=list(yearly_usage_df['yr'].unique()))
     filtered_yearly_usage_df = yearly_usage_df[yearly_usage_df['yr'].isin(selected_years)]
 
     # Filter Musim
-    selected_seasons = st.multiselect("Pilih Musim", seasonal_usage_df['season'].unique(), default=[]) # Default jadi list kosong
+    selected_seasons = st.multiselect("Musim", seasonal_usage_df['season'].unique(), default=list(seasonal_usage_df['season'].unique()))
     filtered_seasonal_usage_df = seasonal_usage_df[seasonal_usage_df['season'].isin(selected_seasons)]
 
     # Filter Bulan
-    selected_months = st.multiselect("Pilih Bulan", monthly_usage_df['mnth'].unique(), default=[]) # Default jadi list kosong
+    selected_months = st.multiselect("Bulan", monthly_usage_df['mnth'].unique(), default=list(monthly_usage_df['mnth'].unique()))
     filtered_monthly_usage_df = monthly_usage_df[monthly_usage_df['mnth'].isin(selected_months)]
 
     # Filter Hari dalam Seminggu
-    selected_weekdays = st.multiselect("Pilih Hari dalam Seminggu", weekday_usage_df['weekday'].unique(), default=[]) # Default jadi list kosong
+    selected_weekdays = st.multiselect("Hari dalam Seminggu", weekday_usage_df['weekday'].unique(), default=list(weekday_usage_df['weekday'].unique()))
     filtered_weekday_usage_df = weekday_usage_df[weekday_usage_df['weekday'].isin(selected_weekdays)]
 
     # Filter Kondisi Cuaca
-    selected_weather = st.multiselect("Pilih Kondisi Cuaca", weather_impact_df['weathersit'].unique(), default=[]) # Default jadi list kosong
+    selected_weather = st.multiselect("Kondisi Cuaca", weather_impact_df['weathersit'].unique(), default=list(weather_impact_df['weathersit'].unique()))
     filtered_weather_impact_df = weather_impact_df[weather_impact_df['weathersit'].isin(selected_weather)]
 
 
@@ -159,13 +182,11 @@ st.subheader('Tren Penggunaan Sepeda Berdasarkan Waktu dan Faktor Lainnya', anch
 
 # 1. Tren Penggunaan Sepeda Bulanan
 with st.expander("Tren Penggunaan Sepeda Bulanan"):
-    print(day_df.dtypes) # Baris debug: cek *semua* tipe data DataFrame
-    print(day_df['dteday'].dtype) # Baris debug *tambahan*: cek tipe data kolom 'dteday'
-    day_df['dteday'] = pd.to_datetime(day_df['dteday']) # *Pastikan konversi datetime tetap ada*
-    monthly_orders_df_day = day_df.resample(rule='M').agg({'cnt': 'sum'})
-    monthly_orders_df_day.index = monthly_orders_df_day.index.strftime('%Y-%m')
-    monthly_orders_df_day = monthly_orders_df_day.reset_index()
+    day_df['dteday'] = pd.to_datetime(day_df['dteday'])
+    monthly_orders_df_day = day_df.resample(rule='M', on='dteday').agg({'cnt': 'sum'}).reset_index() # Memasukkan 'dteday' ke dalam resample
+    monthly_orders_df_day.index = monthly_orders_df_day.index.strftime('%Y-%m') # Ini tidak diperlukan lagi karena kita reset index
     monthly_orders_df_day.rename(columns={'dteday': 'month', 'cnt': 'total_rentals'}, inplace=True)
+
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(monthly_orders_df_day['month'], monthly_orders_df_day['total_rentals'], marker='o', linewidth=2, color=PRIMARY_COLOR)
@@ -211,7 +232,7 @@ with st.expander("Tren Penggunaan Sepeda Tahunan"):
     "* **Implikasi Pertumbuhan:**  Pertumbuhan tahunan yang signifikan ini memiliki implikasi positif bagi layanan penyewaan sepeda, menunjukkan potensi pasar yang berkembang dan keberhasilan layanan dalam menarik lebih banyak pengguna dari waktu ke waktu."
     )
 
-# 3. Tren Penggunaan Sepeda Musiman (dengan filter)
+# 3. Tren Penggunaan Sepeda Musiman
 with st.expander("Tren Penggunaan Sepeda Musiman"):
     seasonal_orders_df_day = day_df.groupby('season').agg({'cnt': 'sum'}).reset_index()
     seasonal_orders_df_day['season'] = seasonal_orders_df_day['season'].map({1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'})
@@ -419,11 +440,11 @@ with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
     plt.tight_layout()
     st.pyplot(fig)
     st.markdown("**Insight Visualisasi Hubungan antara Kecepatan Angin dan Total Penyewaan Sepeda:** \n\n"
-    "Grafik *scatter plot* atau diagram pencar di atas menggambarkan hubungan antara kecepatan angin (yang dinormalisasi) dengan total penyewaan sepeda.\n\n"
-    "* **Korelasi Negatif Lemah atau Tidak Signifikan:**  Serupa dengan kelembapan, grafik ini juga menunjukkan korelasi yang lemah atau tidak signifikan antara kecepatan angin dan total penyewaan sepeda. Tidak ada pola yang jelas yang menunjukkan bahwa kecepatan angin secara langsung dan kuat memengaruhi total penyewaan.\n"
-    "* **Sebaran Data Luas pada Berbagai Kecepatan Angin:** Titik-titik data tersebar secara luas di berbagai tingkat kecepatan angin (dari 0.0 hingga 1.0 normalized). Ini menandakan bahwa total penyewaan sepeda sangat bervariasi, tidak peduli berapa kecepatan anginnya.\n"
-    "* **Kecepatan Angin Bukan Faktor Utama:** Visualisasi ini mengindikasikan bahwa kecepatan angin bukanlah faktor utama yang menentukan total penyewaan sepeda. Faktor-faktor lain kemungkinan memiliki pengaruh yang lebih besar.\n"
-    "* **Fokus pada Faktor yang Lebih Berpengaruh:** Analisis lebih lanjut sebaiknya lebih fokus pada faktor-faktor lain yang telah terbukti memiliki korelasi lebih kuat dengan penyewaan sepeda, seperti temperatur dan kondisi cuaca secara umum, serta faktor-faktor temporal seperti jam, hari dalam seminggu, dan musim."
+    "Grafik *scatter plot* di atas menggambarkan hubungan antara kecepatan angin (yang dinormalisasi) dengan total penyewaan sepeda.\n\n"
+    "* **Korelasi Negatif Lemah atau Tidak Signifikan:** Serupa dengan kelembapan, grafik ini juga menunjukkan korelasi yang lemah atau tidak signifikan antara kecepatan angin dan total penyewaan sepeda. Tidak ada pola yang jelas yang menunjukkan bahwa kecepatan angin secara konsisten memengaruhi total penyewaan.\n"
+    "* **Sebaran Data Luas Tanpa Pola Jelas:** Titik-titik data tersebar luas di berbagai tingkat kecepatan angin (dari 0.0 hingga 1.0 normalized). Ini mengindikasikan bahwa total penyewaan sepeda bervariasi lebar, tanpa dipengaruhi secara kuat oleh kecepatan angin.\n"
+    "* **Kecepatan Angin Bukan Faktor Utama:** Dari visualisasi ini, dapat disimpulkan bahwa kecepatan angin, dalam dataset ini, bukanlah faktor utama yang menentukan total penyewaan sepeda. Faktor-faktor lain mungkin lebih berperan.\n"
+    "* **Fokus pada Faktor yang Lebih Berpengaruh:** Analisis lebih lanjut sebaiknya lebih fokus pada faktor-faktor lain yang menunjukkan korelasi lebih kuat dengan penyewaan sepeda, seperti temperatur dan kondisi cuaca, untuk mendapatkan pemahaman yang lebih akurat tentang dinamika penggunaan sepeda sewaan."
     )
 
 # 12. Distribusi Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir Pekan
@@ -469,15 +490,26 @@ with st.expander("Analisis Lanjutan: Distribusi Kondisi Cuaca (Weathersit) dalam
     plt.title('Distribusi Kondisi Cuaca (Weathersit) dalam Klaster Penyewaan Sepeda', fontsize=16, fontweight='bold', color="#333333")
     plt.xlabel('Klaster Penyewaan', fontsize=12, color="#666666")
     plt.ylabel('Proporsi', fontsize=12, color="#666666")
-    plt.xticks(fontsize=10, color="#555555")
-    plt.yticks(fontsize=10, color="#555555")
-    plt.legend(title='Kondisi Cuaca', fontsize=10, title_fontsize=11)
+    plt.xticks(fontsize=10, color="#e0e0e0") # Warna teks x-ticks diubah
+    plt.yticks(fontsize=10, color="#e0e0e0") # Warna teks y-ticks diubah
+    ax.legend(title='Kondisi Cuaca', fontsize=10, title_fontsize=11, labelcolor='white') # Warna legend diubah
+    ax.yaxis.grid(True, linestyle='--', color='rgba(255, 255, 255, 0.3)') # Warna grid y diubah
+    ax.xaxis.grid(False) # Grid x dihilangkan
+    ax.spines['bottom'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['right'].set_color('white')
+    ax.title.set_color('white')
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
+
+
     plt.tight_layout()
     st.pyplot(fig)
 
     st.markdown("---")
-    st.subheader("Insight:")
-    st.write(
+    st.subheader("Insight:", anchor=False) # Anchor false agar tidak loncat ke subheader saat di-klik
+    st.markdown(
         """
         Distribusi kondisi cuaca dalam setiap klaster penyewaan memberikan wawasan menarik terkait preferensi pengguna sepeda.
         Sebagai contoh, kita dapat mengamati apakah klaster tertentu cenderung memiliki proporsi penyewaan yang lebih tinggi
@@ -489,15 +521,19 @@ with st.expander("Analisis Lanjutan: Distribusi Kondisi Cuaca (Weathersit) dalam
         * **Adaptasi Strategi Operasional:**  Pemahaman ini dapat membantu dalam adaptasi strategi operasional untuk setiap klaster. Misalnya, klaster yang kurang sensitif terhadap cuaca buruk mungkin memerlukan lebih banyak unit sepeda yang tersedia secara konsisten, sementara klaster yang sangat bergantung pada cuaca cerah mungkin memerlukan promosi khusus saat cuaca mendukung.
 
         Analisis lebih lanjut dapat dilakukan dengan menghubungkan distribusi kondisi cuaca ini dengan faktor-faktor lain seperti waktu, hari dalam seminggu, atau bahkan event lokal untuk mendapatkan gambaran yang lebih komprehensif.
-        """
+        """,
+        unsafe_allow_html=True # Tambahkan unsafe_allow_html jika ada format markdown di dalam string
     )
 
     st.markdown("---")
     st.markdown(
         """
-        **Copyright © [Tahun Berjalan] [Nama Anda/Organisasi Anda]**
+        **Copyright © [2025] [Nama Anda/Organisasi Anda]**
 
         _Dashboard ini dibuat untuk tujuan analisis dan visualisasi data.
         Penggunaan kode dan visualisasi diharapkan untuk mencantumkan sumber._
-        """
+        """,
+        unsafe_allow_html=True # Tambahkan unsafe_allow_html jika ada format markdown di dalam string
     )
+
+st.caption('Dashboard ini dibuat oleh [Nama Anda] menggunakan Streamlit, Pandas, Matplotlib, dan Seaborn.')
