@@ -176,14 +176,14 @@ with st.expander("Tren Penggunaan Sepeda Bulanan"):
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Pola Penggunaan Sepeda Bulanan:** \n\n"
+    st.markdown("**Insight Visualisasi Pola Penggunaan Sepeda Bulanan:** \n\n"
     "Grafik garis: total penyewaan sepeda bulanan (2011-2012).\n\n"
     "* **Pola Musiman Terlihat**\n"
     "* **Puncak: Musim Panas-Awal Gugur (Juni-September)**\n"
     "* **Terendah: Musim Dingin-Awal Tahun (November-Februari)**\n"
     "* **Pertumbuhan Tahunan: 2011 ke 2012**\n"
     "* **Pola Konsisten 2011 & 2012**"
-    """)
+    )
 
 # 2. Tren Penggunaan Sepeda Tahunan
 with st.expander("Tren Penggunaan Sepeda Tahunan"):
@@ -355,14 +355,14 @@ with st.expander("Pengaruh Kondisi Cuaca terhadap Penggunaan Sepeda"):
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Pengaruh Kondisi Cuaca:** \n\n"
+    st.markdown("**Insight Visualisasi Pengaruh Kondisi Cuaca:** \n\n"
     "Grafik batang: rata-rata penyewaan per kondisi cuaca.\n\n"
     "* **Cuaca Pengaruhi Penyewaan**\n"
     "* **Cerah/Berawan: Tertinggi**\n"
     "* **Kabut/Awan: Menurun**\n"
     "* **Hujan/Salju Ringan: Terendah**\n"
     "* **Preferensi Cuaca Cerah**"
-    """)
+    )
 
 # 9. Korelasi Temperatur
 with st.expander("Korelasi Temperatur dengan Total Penyewaan"):
@@ -376,14 +376,14 @@ with st.expander("Korelasi Temperatur dengan Total Penyewaan"):
     ax.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Korelasi Temperatur:** \n\n"
+    st.markdown("**Insight Visualisasi Korelasi Temperatur:** \n\n"
     "Grafik scatter plot: temperatur vs total penyewaan.\n\n"
     "* **Korelasi Positif Tidak Linear**\n"
     "* **Penyewaan Naik di Temperatur Menengah (0.5-0.7)**\n"
     "* **Plateau/Penurunan di Temperatur Tinggi (>0.7)**\n"
     "* **Temperatur Menengah Optimal**\n"
     "* **Temperatur Faktor Permintaan**"
-    """)
+    )
 
 # 10. Korelasi Kelembapan
 with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
@@ -397,13 +397,13 @@ with st.expander("Korelasi Kelembapan dengan Total Penyewaan"):
     ax.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Korelasi Kelembapan:** \n\n"
+    st.markdown("**Insight Visualisasi Korelasi Kelembapan:** \n\n"
     "Grafik scatter plot: kelembapan vs total penyewaan.\n\n"
     "* **Korelasi Negatif Lemah/Tidak Signifikan**\n"
     "* **Sebaran Data Luas**\n"
     "* **Kelembapan Bukan Faktor Dominan**\n"
     "* **Fokus Faktor Lain**"
-    """)
+    )
 
 # 11. Korelasi Kecepatan Angin
 with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
@@ -417,13 +417,13 @@ with st.expander("Korelasi Kecepatan Angin dengan Total Penyewaan"):
     ax.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Korelasi Kecepatan Angin:** \n\n"
+    st.markdown("**Insight Visualisasi Korelasi Kecepatan Angin:** \n\n"
     "Grafik scatter plot: kecepatan angin vs total penyewaan.\n\n"
     "* **Korelasi Negatif Lemah/Tidak Signifikan**\n"
     "* **Sebaran Data Luas, Tidak Berpola**\n"
     "* **Kecepatan Angin Bukan Faktor Utama**\n"
     "* **Fokus Faktor Berpengaruh Lain**"
-    """)
+    )
 
 # 12. Distribusi Jam Kerja vs Akhir Pekan
 with st.expander("Distribusi Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir Pekan"):
@@ -442,14 +442,14 @@ with st.expander("Distribusi Penggunaan Sepeda per Jam pada Hari Kerja vs. Akhir
     ax.grid(axis='y', linestyle='--')
     plt.tight_layout()
     st.pyplot(fig)
-    st.markdown("""**Insight Visualisasi Distribusi Jam Kerja vs Akhir Pekan:** \n\n"
+    st.markdown("**Insight Visualisasi Distribusi Jam Kerja vs Akhir Pekan:** \n\n"
     "Grafik garis: distribusi jam kerja vs akhir pekan.\n\n"
     "* **Pola Penggunaan Berbeda: Hari Kerja vs Akhir Pekan**\n"
     "* **Hari Kerja: Puncak Ganda (8 & 17-18)**\n"
     "* **Akhir Pekan: Puncak Tunggal Siang (14-16)**\n"
     "* **Hari Kerja > Akhir Pekan (Jam Sibuk)**\n"
     "* **Operasional: Bedakan Hari Kerja vs Akhir Pekan**"
-    """)
+    ")
 
 
     st.markdown("---")
